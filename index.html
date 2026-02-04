@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working Capital Calculator | Billd</title>
+    <link rel="icon" type="image/jpeg" href="Billd Brick - JPG.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --billd-blue: #4A90D9;
+            --billd-blue-light: #5BA3E8;
+            --billd-blue-lighter: #E8F4FC;
+            --billd-green: #34D399;
+            --billd-navy: #1e3a5f;
+            
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            
+            --success: #22c55e;
+            --success-light: #dcfce7;
+            --warning: #f59e0b;
+            --warning-light: #FEF3C7;
+            
+            --bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--neutral-800);
+            min-height: 100vh;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 28px;
+            width: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab {
+            padding: 0.625rem 1rem;
+            border: 1px solid var(--neutral-200);
+            background: white;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-500);
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            color: var(--neutral-700);
+            border-color: var(--neutral-300);
+        }
+
+        .tab.active {
+            background: var(--billd-navy);
+            color: white;
+            border-color: var(--billd-navy);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--neutral-200);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--neutral-200);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-header-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--billd-blue-lighter);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-header-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--billd-blue);
+        }
+
+        .card-header h3 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--neutral-800);
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .form-section {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-section-title {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-group {
+            margin-bottom: 0.625rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--neutral-700);
+            margin-bottom: 0.25rem;
+        }
+
+        .form-group .hint {
+            font-size: 0.6875rem;
+            color: var(--neutral-400);
+            margin-top: 0.25rem;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .input-row .form-input {
+            flex: 1;
+        }
+
+        .input-row .form-input.small {
+            flex: 0 0 60px;
+        }
+
+        .input-suffix {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--neutral-500);
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--neutral-300);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: var(--neutral-800);
+            transition: border-color 0.15s, box-shadow 0.15s;
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--billd-blue);
+            box-shadow: 0 0 0 3px var(--billd-blue-lighter);
+        }
+
+        .form-input.highlight {
+            background: var(--billd-blue-lighter);
+            border-color: var(--billd-blue-light);
+        }
+
+        .form-input.calculated {
+            background: var(--neutral-100);
+            color: var(--neutral-500);
+            cursor: not-allowed;
+            border-color: var(--neutral-200);
+        }
+
+        .label-suffix {
+            font-weight: 400;
+            color: inherit;
+        }
+
+        .billd-options {
+            display: none;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--neutral-200);
+        }
+
+        .billd-options.show {
+            display: block;
+        }
+
+        .billd-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--billd-blue);
+            color: white;
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.875rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .billd-badge .chevron {
+            transition: transform 0.2s ease;
+            margin-left: 0.25rem;
+        }
+
+        .billd-badge.collapsed .chevron {
+            transform: rotate(-90deg);
+        }
+
+        .billd-fields {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.2s ease;
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .billd-fields.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .output-section {
+            display: none;
+        }
+
+        .output-section.active {
+            display: block;
+        }
+
+        /* =============================================
+           BREAKDOWN SECTION - Matching Screenshot Exactly
+           ============================================= */
+        .breakdown-container {
+            padding: 2rem 2.5rem;
+            background: white;
+        }
+
+        .breakdown-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .breakdown-header-label {
+            font-size: 1.32rem;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .breakdown-header-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--billd-blue);
+        }
+
+        /* Chart with arrow */
+        .breakdown-chart {
+            display: flex;
+            gap: 1rem;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .arrow-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            padding: 0 0.25rem;
+        }
+
+        .flex-label {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--billd-blue);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .arrow-line-vertical {
+            flex: 1;
+            width: 3px;
+            background: var(--billd-blue);
+            border-radius: 2px;
+            position: relative;
+            margin: 0.375rem 0;
+        }
+
+        .arrow-line-vertical::before,
+        .arrow-line-vertical::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+        }
+
+        .arrow-line-vertical::before {
+            top: -1px;
+            border-bottom: 8px solid var(--billd-blue);
+        }
+
+        .arrow-line-vertical::after {
+            bottom: -1px;
+            border-top: 8px solid var(--billd-blue);
+        }
+
+        /* Bars */
+        .bars-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.83rem;
+        }
+
+        .bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .bar-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bar-icon {
+            width: 29px;
+            height: 29px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .bar-icon svg {
+            width: 21px;
+            height: 21px;
+            color: var(--billd-blue);
+        }
+
+        .bar-icon img {
+            width: 25px;
+            height: 25px;
+            object-fit: contain;
+        }
+
+        .bar-item.green .bar-icon img {
+            filter: hue-rotate(-50deg);
+        }
+
+        .bar-label {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bar-track {
+            flex: 1;
+            height: 32px;
+            background: transparent;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--billd-blue);
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+
+        .bar-value {
+            font-size: 1.24rem;
+            font-weight: 600;
+            color: var(--billd-blue);
+            white-space: nowrap;
+            min-width: 144px;
+            text-align: right;
+        }
+
+        .bar-percent {
+            font-size: 0.99rem;
+            color: var(--neutral-400);
+        }
+
+        /* Green bar for Cash on Hand */
+        .bar-item.green {
+            padding-top: 0.625rem;
+            border-top: 1px dashed var(--neutral-200);
+            margin-top: 0.25rem;
+        }
+
+        .bar-item.green .bar-fill {
+            background: var(--billd-green);
+        }
+
+        .bar-item.green .bar-value {
+            color: #059669;
+        }
+
+        .bar-item.green .bar-label {
+            color: #15803d;
+        }
+
+        .bar-item.green .bar-icon svg {
+            color: #059669;
+        }
+
+        .bar-item.green .bar-percent {
+            color: #16a34a;
+        }
+
+        .bar-item.warning .bar-percent {
+            color: var(--neutral-400);
+            font-weight: 500;
+        }
+
+        /* Warning Box */
+        .cash-warning {
+            margin: 1.5rem 0 0 0;
+            padding: 1rem 1.25rem;
+            background: var(--warning-light);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: #92400e;
+            line-height: 1.5;
+        }
+
+        .cash-warning strong {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .cash-warning strong::before {
+            content: '⚠';
+            font-size: 1rem;
+        }
+
+        /* Working Capital Box */
+        .working-capital-box {
+            padding: 1.5rem 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .working-capital-box-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        /* Cost Table */
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1.05rem;
+        }
+
+        .cost-table thead th {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 2px solid var(--billd-blue);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .cost-table thead th:nth-child(n+2) {
+            text-align: right;
+        }
+
+        .cost-table tbody td {
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--neutral-200);
+            color: var(--neutral-800);
+            font-weight: 400;
+        }
+
+        .cost-table tbody td:nth-child(n+2) {
+            text-align: right;
+        }
+
+        .cost-table tbody td:first-child {
+            font-weight: 600;
+        }
+
+        .cost-table tfoot td {
+            padding: 0.9rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+            border-top: 2px solid var(--billd-blue);
+        }
+
+        .cost-table tfoot td:nth-child(n+2) {
+            text-align: right;
+        }
+
+        .cost-table tfoot .blended-row td {
+            font-weight: 600;
+            font-size: 1.21rem;
+            color: var(--billd-blue);
+            border-top: none;
+            padding-top: 0.45rem;
+        }
+
+        .cost-table-container {
+            padding: 0 1.5rem 1.5rem;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .cost-available-cash {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: #ecfdf5;
+            border-radius: 6px;
+            margin-top: 1.25rem;
+        }
+
+        .cost-available-cash-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .cost-available-cash-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        /* Comparison Tab */
+        .comparison-container {
+            padding: 0 1.5rem 1.5rem;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .comparison-highlight {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-highlight-icon {
+            color: #059669;
+            flex-shrink: 0;
+        }
+
+        .comparison-highlight-text {
+        }
+
+        .comparison-highlight-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .comparison-highlight-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #065f46;
+        }
+
+        .comparison-highlight-cost {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--neutral-500);
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .comparison-table-change-positive {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .comparison-table-change-neutral {
+            color: var(--neutral-500);
+            font-weight: 500;
+        }
+
+        /* Financial Statement Tables */
+        .fin-stmt-container {
+            padding: 0 1.5rem 1.5rem;
+            margin: 0 auto;
+        }
+
+        .fin-section {
+            margin-bottom: 2.25rem;
+            overflow-x: auto;
+        }
+
+        .fin-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .fin-section-title {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--billd-navy);
+            background: none;
+            padding: 0 0.9rem 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .fin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .fin-table thead th {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--neutral-500);
+            background: none;
+            padding: 0.6rem 0.9rem;
+            text-align: right;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            border-bottom: 2px solid var(--billd-blue);
+        }
+
+        .fin-table thead th:first-child {
+            text-align: left;
+            min-width: 180px;
+        }
+
+        .fin-table thead .dso-header {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--neutral-500);
+            background: none;
+            padding: 0.25rem 0.9rem;
+            text-align: right;
+            border: none;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .fin-table thead .dso-header:first-child {
+            text-align: left;
+        }
+
+        .fin-table thead .dso-header.past-dso {
+            color: var(--neutral-400);
+            font-style: italic;
+        }
+
+        .fin-table thead th.past-dso {
+            color: var(--neutral-400);
+        }
+
+        .fin-table tbody td {
+            padding: 0.6rem 0.9rem;
+            border-bottom: 1px solid var(--neutral-200);
+            color: var(--neutral-800);
+            font-weight: 400;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .fin-table tbody td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: var(--neutral-700);
+        }
+
+        .fin-table tbody tr.section-header td {
+            font-weight: 700;
+            color: var(--neutral-800);
+            background: var(--neutral-50);
+            border-bottom: 1px solid var(--neutral-300);
+            padding-top: 0.65rem;
+        }
+
+        .fin-table tbody tr.total-row td {
+            font-weight: 700;
+            color: var(--neutral-800);
+            border-top: 2px solid var(--billd-blue);
+            border-bottom: 2px solid var(--billd-blue);
+        }
+
+        .fin-table tbody tr.subtotal-row td {
+            font-weight: 600;
+            color: var(--neutral-800);
+            border-bottom: 1px solid var(--neutral-400);
+        }
+
+        .fin-table tbody tr.indent td:first-child {
+            padding-left: 1.5rem;
+            font-weight: 400;
+        }
+
+        /* Export Button */
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--billd-navy);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .export-btn:hover {
+            background: var(--billd-blue);
+        }
+
+        /* Export Report - hidden on screen */
+        .export-report {
+            display: none;
+        }
+
+        /* =============================================
+           EXPORT REPORT - Print Styles
+           ============================================= */
+        @media print {
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+                font-size: 10pt;
+                font-family: 'Inter', -apple-system, sans-serif;
+                color: #1e293b;
+                line-height: 1.6;
+            }
+            .header, .tabs, .container {
+                display: none !important;
+            }
+            .export-report {
+                display: block !important;
+            }
+
+            @page {
+                size: letter;
+                margin: 0;
+            }
+
+            .export-page {
+                page-break-after: always;
+                position: relative;
+                padding: 0.6in 0.75in;
+                box-sizing: border-box;
+            }
+            .export-page:last-child {
+                page-break-after: auto;
+            }
+
+            /* Narrative text - white paper style */
+            .export-narrative {
+                margin-bottom: 1rem;
+            }
+            .export-narrative p {
+                font-size: 0.82rem;
+                line-height: 1.65;
+                color: #334155;
+                margin: 0 0 0.6rem 0;
+            }
+            .export-narrative p strong {
+                color: #1e293b;
+            }
+            .export-narrative p em {
+                font-style: italic;
+            }
+
+            /* Page header */
+            .export-page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 0.6rem;
+                border-bottom: 3px solid #1e3a5f;
+                margin-bottom: 1.5rem;
+            }
+            .export-logo { height: 26px; width: auto; }
+            .export-page-header-right {
+                font-size: 0.7rem;
+                color: #64748b;
+                letter-spacing: 0.02em;
+            }
+            .export-page-title-small {
+                font-size: 0.7rem;
+                color: #64748b;
+                font-weight: 500;
+                letter-spacing: 0.02em;
+            }
+
+            /* Title area */
+            .export-title {
+                font-size: 1.6rem;
+                font-weight: 700;
+                color: #1e3a5f;
+                margin: 0 0 0.2rem 0;
+                letter-spacing: -0.01em;
+            }
+            .export-company {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #334155;
+                margin-bottom: 0.125rem;
+            }
+            .export-prepared {
+                font-size: 0.8rem;
+                color: #64748b;
+                margin-bottom: 1.25rem;
+            }
+
+            /* Metrics grid */
+            .export-metrics-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+                margin-bottom: 1.25rem;
+            }
+            .export-metric-card {
+                background: #f1f5f9;
+                border-radius: 6px;
+                padding: 0.75rem 1rem;
+                border-left: 3px solid #4A90D9;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            .export-metric-icon {
+                width: 32px;
+                height: 32px;
+                object-fit: contain;
+                flex-shrink: 0;
+            }
+            .export-metric-text {
+                flex: 1;
+            }
+            .export-metric-label {
+                font-size: 0.65rem;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+            .export-metric-value {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #1e293b;
+            }
+
+            /* Hero comparison */
+            .export-hero-comparison {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+                border: 1px solid #a7f3d0;
+                border-radius: 8px;
+                padding: 1rem 1.25rem;
+                margin-bottom: 1.25rem;
+            }
+            .export-hero-col { flex: 1; text-align: center; }
+            .export-hero-col-green .export-hero-value { color: #059669; }
+            .export-hero-col-delta .export-hero-value { color: #059669; font-size: 1.4rem; }
+            .export-hero-label {
+                font-size: 0.7rem;
+                font-weight: 600;
+                color: #065f46;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+            .export-hero-value {
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #1e293b;
+            }
+            .export-hero-arrow {
+                font-size: 1.5rem;
+                color: #059669;
+                font-weight: 700;
+            }
+
+            /* Stack table */
+            .export-stack-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+            .export-stack-table th {
+                font-size: 0.65rem; font-weight: 600; color: #64748b;
+                text-transform: uppercase; padding: 0.4rem 0.6rem;
+                border-bottom: 2px solid #4A90D9; text-align: left;
+            }
+            .export-stack-table th:nth-child(n+2) { text-align: right; }
+            .export-stack-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid #e2e8f0; }
+            .export-stack-table td:first-child { font-weight: 600; }
+            .export-stack-table td:nth-child(n+2) { text-align: right; }
+
+            /* Section titles */
+            .export-section-title {
+                font-size: 1.15rem; font-weight: 700; color: #1e3a5f;
+                margin: 0 0 0.5rem 0;
+                padding-bottom: 0.35rem;
+                border-bottom: 2px solid #4A90D9;
+            }
+            .export-subsection-title {
+                font-size: 0.85rem; font-weight: 600; color: #1e3a5f;
+                margin: 0 0 0.5rem 0;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+                font-size: 0.7rem;
+            }
+
+            /* Two column layout */
+            .export-two-col {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            /* Cost tables */
+            .export-cost-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+            .export-cost-table th {
+                font-size: 0.6rem; font-weight: 600; color: #64748b;
+                text-transform: uppercase; padding: 0.35rem 0.5rem;
+                border-bottom: 2px solid #4A90D9; text-align: left;
+            }
+            .export-cost-table th:nth-child(n+2) { text-align: right; }
+            .export-cost-table td {
+                padding: 0.3rem 0.5rem; border-bottom: 1px solid #e2e8f0; font-size: 0.75rem;
+            }
+            .export-cost-table td:first-child { font-weight: 600; }
+            .export-cost-table td:nth-child(n+2) { text-align: right; }
+            .export-cost-table tfoot td { font-weight: 700; border-top: 2px solid #4A90D9; }
+
+            /* Trade-off box */
+            .export-tradeoff-box {
+                display: flex; align-items: center; gap: 0.75rem;
+                background: #ecfdf5; border: 1px solid #a7f3d0;
+                border-radius: 6px; padding: 0.75rem 1rem;
+                margin-bottom: 1rem; font-size: 0.8rem; color: #065f46;
+            }
+            .export-tradeoff-icon { font-size: 1.2rem; color: #059669; font-weight: 700; }
+
+            /* Comparison table */
+            .export-comparison-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+            .export-comparison-table th {
+                font-size: 0.65rem; font-weight: 600; color: #64748b;
+                text-transform: uppercase; padding: 0.4rem 0.6rem;
+                border-bottom: 2px solid #4A90D9; text-align: left;
+            }
+            .export-comparison-table th:nth-child(n+2) { text-align: right; }
+            .export-comparison-table td { padding: 0.35rem 0.6rem; border-bottom: 1px solid #e2e8f0; }
+            .export-comparison-table td:first-child { font-weight: 600; }
+            .export-comparison-table td:nth-child(n+2) { text-align: right; }
+
+            /* Financial tables */
+            .export-fin-section { margin-bottom: 1rem; }
+            .export-fin-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+            .export-fin-table th {
+                font-size: 0.6rem; font-weight: 600; color: #64748b;
+                text-transform: uppercase; padding: 0.3rem 0.5rem;
+                border-bottom: 2px solid #4A90D9; text-align: right;
+            }
+            .export-fin-table th:first-child { text-align: left; }
+            .export-fin-table td {
+                padding: 0.3rem 0.5rem; border-bottom: 1px solid #e2e8f0; text-align: right;
+            }
+            .export-fin-table td:first-child { text-align: left; font-weight: 500; }
+            .export-fin-table .total-row td { font-weight: 700; border-top: 2px solid #4A90D9; }
+            .export-fin-table .subtotal-row td { font-weight: 600; }
+            .export-fin-table .indent td:first-child { padding-left: 1rem; }
+
+            /* Stats row */
+            .export-stats-row {
+                display: grid; grid-template-columns: 1fr 1fr 1fr;
+                gap: 0.75rem; margin-bottom: 1rem;
+            }
+            .export-stat-card {
+                background: #f1f5f9; border-radius: 6px;
+                padding: 0.75rem; text-align: center;
+                border-top: 3px solid #4A90D9;
+            }
+            .export-stat-icon {
+                width: 28px; height: 28px; object-fit: contain;
+                margin: 0 auto 0.25rem auto; display: block;
+            }
+            .export-stat-value { font-size: 1.5rem; font-weight: 800; color: #4A90D9; }
+            .export-stat-label {
+                font-size: 0.7rem; color: #475569; line-height: 1.3; margin-top: 0.25rem;
+            }
+
+            /* Principle box */
+            .export-principle-box {
+                background: #EFF6FF; border-left: 4px solid #4A90D9;
+                padding: 0.75rem 1rem; margin-bottom: 1rem;
+                border-radius: 0 6px 6px 0;
+            }
+            .export-principle-box h3 {
+                font-size: 0.85rem; font-weight: 700; color: #1e3a5f;
+                margin: 0 0 0.25rem 0;
+            }
+            .export-principle-box p {
+                font-size: 0.75rem; color: #334155; line-height: 1.5; margin: 0;
+            }
+
+            /* Sources grid */
+            .export-sources-grid {
+                display: grid; grid-template-columns: 1fr 1fr;
+                gap: 0.6rem 1rem; margin-bottom: 1rem;
+            }
+            .export-source-card {
+                padding: 0.5rem 0.6rem;
+                border-left: 3px solid #4A90D9;
+                background: #f8fafc;
+            }
+            .export-source-card-header {
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+                margin-bottom: 0.15rem;
+            }
+            .export-source-icon {
+                width: 22px;
+                height: 22px;
+                object-fit: contain;
+                flex-shrink: 0;
+            }
+            .export-source-card h4 {
+                font-size: 0.72rem; font-weight: 700; color: #1e3a5f; margin: 0;
+            }
+            .export-source-card p {
+                font-size: 0.62rem; color: #475569; line-height: 1.45; margin: 0;
+            }
+
+            /* Next steps */
+            .export-next-steps {
+                text-align: center; padding: 0.75rem;
+                background: #1e3a5f; color: white; border-radius: 6px;
+            }
+            .export-next-steps-icon {
+                width: 32px; height: 32px; object-fit: contain;
+                margin: 0 auto 0.35rem auto; display: block;
+                filter: brightness(0) invert(1);
+            }
+            .export-next-steps h3 { font-size: 0.85rem; margin: 0 0 0.25rem 0; }
+            .export-next-steps p { font-size: 0.75rem; margin: 0.125rem 0; opacity: 0.9; }
+
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="black_registered@web copy.png" alt="billd" class="logo-img">
+            </div>
+            <button class="export-btn" onclick="exportReport()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="16" height="16">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Export Report
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="discovery">Current State</button>
+            <button class="tab" data-tab="proposal">Proposal with Billd</button>
+            <button class="tab" data-tab="discoveryCost">Current State Cost</button>
+            <button class="tab" data-tab="proposalCost">Proposal Cost</button>
+            <button class="tab" data-tab="financial" style="grid-column: 1 / -1;">Financial Statement</button>
+            <button class="tab" data-tab="comparison" style="grid-column: 1 / -1;">Comparison</button>
+        </div>
+
+        <div class="main-grid">
+            <!-- Input Panel -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </div>
+                    <h3>Customer Inputs</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-section">
+                        <div class="form-section-title">Report Info</div>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" id="companyName" class="form-input highlight" value="" placeholder="Enter company name">
+                        </div>
+                        <div class="form-group">
+                            <label>Prepared By</label>
+                            <input type="text" id="preparedBy" class="form-input highlight" value="" placeholder="Sales rep name">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Revenue & Expenses</div>
+                        
+                        <div class="form-group">
+                            <label>Annual Revenue <span class="label-suffix">($)</span></label>
+                            <input type="text" id="annualRevenue" class="form-input highlight" value="12,000,000">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Materials <span class="label-suffix">(%)</span></label>
+                            <input type="text" id="materialsPercent" class="form-input highlight" value="30">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Labor <span class="label-suffix">(%)</span></label>
+                            <input type="text" id="laborPercent" class="form-input highlight" value="35">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Overhead <span class="label-suffix">(%)</span></label>
+                            <input type="text" id="overheadPercent" class="form-input highlight" value="25">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Profit <span class="label-suffix">(%)</span> (calculated)</label>
+                            <input type="text" id="profitPercent" class="form-input calculated" value="10" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Cash Flow Timing</div>
+                        
+                        <div class="form-group">
+                            <label>DSO (Days Sales Outstanding)</label>
+                            <input type="text" id="dso" class="form-input highlight" value="60">
+                            <div class="hint">Average days to get paid after pay app submission</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Supplier Terms (Days)</label>
+                            <input type="text" id="supplierDays" class="form-input highlight" value="30">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cash Discount <span class="label-suffix">(%)</span></label>
+                            <input type="text" id="supplierDiscount" class="form-input highlight" value="2">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">Current Working Capital</div>
+
+                        <div class="form-group">
+                            <label>Line of Credit Balance <span class="label-suffix">($)</span></label>
+                            <div class="input-row">
+                                <input type="text" id="locBalance" class="form-input highlight" value="250,000">
+                                <input type="text" id="locRate" class="form-input highlight small" value="12">
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Credit Card Balance <span class="label-suffix">($)</span></label>
+                            <div class="input-row">
+                                <input type="text" id="ccBalance" class="form-input highlight" value="100,000">
+                                <input type="text" id="ccRate" class="form-input highlight small" value="36">
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Starting Cash Balance <span class="label-suffix">($)</span></label>
+                            <div class="input-row">
+                                <input type="text" id="cashBalance" class="form-input highlight" value="50,000">
+                                <input type="text" id="cashCostRate" class="form-input highlight small" value="15">
+                                <span class="input-suffix">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="billd-options" id="billdOptions">
+                        <div class="billd-badge" id="billdToggle" onclick="toggleBilldFields()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
+                            Billd Financing
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        </div>
+
+                        <div class="billd-fields" id="billdFields">
+                            <div class="form-group">
+                                <label>Material Financing <span class="label-suffix">($)</span></label>
+                                <div class="input-row">
+                                    <input type="text" id="materialFinancing" class="form-input highlight" value="0">
+                                    <input type="text" class="form-input small calculated" value="3%" readonly>
+                                </div>
+                                <div class="hint">Up to 120-day terms at 3% monthly</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pay App Advance <span class="label-suffix">($)</span></label>
+                                <div class="input-row">
+                                    <input type="text" id="payAppAdvance" class="form-input highlight" value="0">
+                                    <input type="text" class="form-input small calculated" value="3%" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Flex Line <span class="label-suffix">($)</span></label>
+                                <div class="input-row">
+                                    <input type="text" id="flexLine" class="form-input highlight" value="350,000">
+                                    <input type="text" class="form-input small calculated" value="1.99%" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Turner APP <span class="label-suffix">($)</span></label>
+                                <div class="input-row">
+                                    <input type="text" id="turnerApp" class="form-input highlight" value="200,000">
+                                    <input type="text" class="form-input small calculated" value="1.99%" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div>
+                <!-- Discovery Output -->
+                <div class="output-section active" id="discoveryOutput">
+                    <div class="card">
+                        <div class="breakdown-container">
+                            <div class="breakdown-header">
+                                <div class="breakdown-header-label">Total Working Capital Capacity Needed</div>
+                                <div class="breakdown-header-value" id="totalBalanceDiscovery">$1,800,000.00</div>
+                            </div>
+
+                            <div class="working-capital-box">
+                                <div class="working-capital-box-title">Working Capital Sources</div>
+                                <div class="breakdown-chart">
+                                    <div class="arrow-column">
+                                        <div class="flex-label">Least<br>Flexible</div>
+                                        <div class="arrow-line-vertical"></div>
+                                        <div class="flex-label">Most<br>Flexible</div>
+                                    </div>
+                                    <div class="bars-column" id="barsDiscovery"></div>
+                                </div>
+                                <div id="cashOnHandDiscoveryContainer"></div>
+                            </div>
+
+                            <div class="cash-warning" id="cashWarningDiscovery" style="display: none;">
+                                <strong>High cash usage:</strong>
+                                You're using a large portion of your most flexible capital. Consider diversifying to preserve cash for emergencies and opportunities.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Discovery Cost Output -->
+                <div class="output-section" id="discoveryCostOutput">
+                    <div class="card">
+                        <div class="breakdown-container">
+                            <div class="breakdown-header">
+                                <div class="breakdown-header-label">Weighted Cost of Working Capital</div>
+                            </div>
+
+                            <div class="cost-table-container">
+                                <table class="cost-table" id="costTableDiscovery">
+                                    <thead>
+                                        <tr>
+                                            <th>Working Capital Option</th>
+                                            <th>Interest Rate</th>
+                                            <th>Time Period</th>
+                                            <th>Balance</th>
+                                            <th>Monthly Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="costTableDiscoveryBody"></tbody>
+                                    <tfoot id="costTableDiscoveryFoot"></tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proposal Output -->
+                <div class="output-section" id="proposalOutput">
+                    <div class="card">
+                        <div class="breakdown-container">
+                            <div class="breakdown-header">
+                                <div class="breakdown-header-label">Total Working Capital Capacity Needed</div>
+                                <div class="breakdown-header-value" id="totalBalanceProposal">$1,800,000.00</div>
+                            </div>
+
+                            <div class="working-capital-box">
+                                <div class="working-capital-box-title">Working Capital Sources</div>
+                                <div class="breakdown-chart">
+                                    <div class="arrow-column">
+                                        <div class="flex-label">Least<br>Flexible</div>
+                                        <div class="arrow-line-vertical"></div>
+                                        <div class="flex-label">Most<br>Flexible</div>
+                                    </div>
+                                    <div class="bars-column" id="barsProposal"></div>
+                                </div>
+                                <div id="cashOnHandProposalContainer"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Proposal Cost Output -->
+                <div class="output-section" id="proposalCostOutput">
+                    <div class="card">
+                        <div class="breakdown-container">
+                            <div class="breakdown-header">
+                                <div class="breakdown-header-label">Weighted Cost of Working Capital</div>
+                            </div>
+
+                            <div class="cost-table-container">
+                                <table class="cost-table" id="costTableProposal">
+                                    <thead>
+                                        <tr>
+                                            <th>Working Capital Option</th>
+                                            <th>Interest Rate</th>
+                                            <th>Time Period</th>
+                                            <th>Balance</th>
+                                            <th>Monthly Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="costTableProposalBody"></tbody>
+                                    <tfoot id="costTableProposalFoot"></tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Statement Output -->
+                <div class="output-section" id="financialOutput">
+                    <div class="card">
+                        <div class="breakdown-container">
+                            <div class="breakdown-header">
+                                <div class="breakdown-header-label">Financial Statement</div>
+                            </div>
+
+                            <div class="fin-stmt-container">
+                                <div class="fin-section">
+                                    <div class="fin-section-title">Profit and Loss</div>
+                                    <table class="fin-table">
+                                        <thead><tr id="finPnlHead"></tr></thead>
+                                        <tbody id="finPnlBody"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="fin-section">
+                                    <div class="fin-section-title">Cash Flow Statement</div>
+                                    <table class="fin-table">
+                                        <thead id="finCashFlowHead"></thead>
+                                        <tbody id="finCashFlowBody"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="fin-section">
+                                    <div class="fin-section-title">Balance Sheet</div>
+                                    <table class="fin-table">
+                                        <thead><tr id="finBsHead"></tr></thead>
+                                        <tbody id="finBsBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Output -->
+                <div class="output-section" id="comparisonOutput">
+                    <div class="card">
+                        <div class="breakdown-container">
+                            <div class="breakdown-header">
+                                <div class="breakdown-header-label">Current State vs Proposal with Billd</div>
+                            </div>
+
+                            <div class="comparison-container">
+                                <div class="comparison-highlight">
+                                    <div class="comparison-highlight-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="28" height="28"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                                    </div>
+                                    <div class="comparison-highlight-text">
+                                        <div class="comparison-highlight-value" id="compCashImprovement">+$0</div>
+                                        <div class="comparison-highlight-label">more cash preserved</div>
+                                    </div>
+                                    <div class="comparison-highlight-cost">
+                                        <span id="compCostDelta">for only $0/mo additional financing cost</span>
+                                    </div>
+                                </div>
+
+                                <div class="cost-table-container">
+                                    <table class="cost-table" id="comparisonTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>Current State</th>
+                                                <th>With Billd</th>
+                                                <th>Change</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="comparisonTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Report (hidden on screen, shown on print) -->
+    <div id="exportReport" class="export-report">
+
+        <!-- PAGE 1: The Challenge & Your Numbers -->
+        <div class="export-page" id="exportPage1">
+            <div class="export-page-header">
+                <img src="black_registered@web copy.png" alt="billd" class="export-logo">
+                <div class="export-page-header-right">
+                    <span id="exportDate"></span>
+                </div>
+            </div>
+
+            <h1 class="export-title">Working Capital Analysis</h1>
+            <div class="export-company" id="exportCompany"></div>
+            <div class="export-prepared" id="exportPrepared"></div>
+
+            <div class="export-narrative" id="expNarrativePage1"></div>
+
+            <div class="export-metrics-grid">
+                <div class="export-metric-card">
+                    <img src="Style References/PNG/b_increase.png" alt="" class="export-metric-icon">
+                    <div class="export-metric-text">
+                        <div class="export-metric-label">Annual Revenue</div>
+                        <div class="export-metric-value" id="expAnnualRevenue"></div>
+                    </div>
+                </div>
+                <div class="export-metric-card">
+                    <img src="Style References/PNG/b_share.png" alt="" class="export-metric-icon">
+                    <div class="export-metric-text">
+                        <div class="export-metric-label">Monthly Expenses</div>
+                        <div class="export-metric-value" id="expMonthlyExpenses"></div>
+                    </div>
+                </div>
+                <div class="export-metric-card">
+                    <img src="Style References/PNG/b_clock.png" alt="" class="export-metric-icon">
+                    <div class="export-metric-text">
+                        <div class="export-metric-label">Days Sales Outstanding</div>
+                        <div class="export-metric-value" id="expDSO"></div>
+                    </div>
+                </div>
+                <div class="export-metric-card">
+                    <img src="Style References/PNG/b_warning.png" alt="" class="export-metric-icon">
+                    <div class="export-metric-text">
+                        <div class="export-metric-label">Working Capital Gap</div>
+                        <div class="export-metric-value" id="expTotalWC"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="export-narrative" id="expNarrativeGap"></div>
+
+            <div class="export-stack-section">
+                <h3 class="export-subsection-title">Your Current Capital Stack</h3>
+                <table class="export-stack-table">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Flexibility</th>
+                            <th>Current Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expStackBody"></tbody>
+                </table>
+            </div>
+
+            <div class="export-narrative" id="expNarrativeCurrentAssessment"></div>
+
+        </div>
+
+        <!-- PAGE 2: The Recommendation -->
+        <div class="export-page" id="exportPage2">
+            <div class="export-page-header">
+                <img src="black_registered@web copy.png" alt="billd" class="export-logo">
+                <div class="export-page-title-small">Working Capital Analysis</div>
+            </div>
+
+            <h2 class="export-section-title">Our Recommendation</h2>
+
+            <div class="export-narrative" id="expNarrativeRecommendation"></div>
+
+            <div class="export-hero-comparison">
+                <div class="export-hero-col">
+                    <div class="export-hero-label">Current Cash on Hand</div>
+                    <div class="export-hero-value" id="expCashCurrent"></div>
+                </div>
+                <div class="export-hero-arrow">&#8594;</div>
+                <div class="export-hero-col export-hero-col-green">
+                    <div class="export-hero-label">With Billd</div>
+                    <div class="export-hero-value" id="expCashProposal"></div>
+                </div>
+                <div class="export-hero-col export-hero-col-delta">
+                    <div class="export-hero-label">Cash Preserved</div>
+                    <div class="export-hero-value" id="expCashDelta"></div>
+                </div>
+            </div>
+
+            <div class="export-narrative" id="expNarrativeTradeoff"></div>
+
+            <table class="export-comparison-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Current State</th>
+                        <th>With Billd</th>
+                        <th>Change</th>
+                    </tr>
+                </thead>
+                <tbody id="expComparisonBody"></tbody>
+            </table>
+
+            <div class="export-narrative" id="expNarrativeBottomLine"></div>
+
+        </div>
+
+        <!-- PAGE 3: The Cost Breakdown -->
+        <div class="export-page" id="exportPage3">
+            <div class="export-page-header">
+                <img src="black_registered@web copy.png" alt="billd" class="export-logo">
+                <div class="export-page-title-small">Working Capital Analysis</div>
+            </div>
+
+            <h2 class="export-section-title">Cost of Capital Breakdown</h2>
+
+            <div class="export-narrative" id="expNarrativeCost"></div>
+
+            <div class="export-two-col">
+                <div class="export-col">
+                    <h3 class="export-subsection-title">Current State</h3>
+                    <table class="export-cost-table">
+                        <thead>
+                            <tr><th>Source</th><th>Rate</th><th>Balance</th><th>Mo. Cost</th></tr>
+                        </thead>
+                        <tbody id="expCostCurrentBody"></tbody>
+                        <tfoot id="expCostCurrentFoot"></tfoot>
+                    </table>
+                </div>
+                <div class="export-col">
+                    <h3 class="export-subsection-title">With Billd</h3>
+                    <table class="export-cost-table">
+                        <thead>
+                            <tr><th>Source</th><th>Rate</th><th>Balance</th><th>Mo. Cost</th></tr>
+                        </thead>
+                        <tbody id="expCostProposalBody"></tbody>
+                        <tfoot id="expCostProposalFoot"></tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div class="export-narrative" id="expNarrativeCostExplain"></div>
+
+            <h3 class="export-subsection-title">Financial Snapshot</h3>
+            <div class="export-narrative" id="expNarrativeFinancial"></div>
+
+            <div class="export-two-col">
+                <div class="export-col">
+                    <h4 class="export-subsection-title" style="font-size:0.75rem;">Monthly Profit &amp; Loss</h4>
+                    <table class="export-fin-table">
+                        <tbody id="expPnlBody"></tbody>
+                    </table>
+                </div>
+                <div class="export-col">
+                    <h4 class="export-subsection-title" style="font-size:0.75rem;">Cash Flow (Months 1-3)</h4>
+                    <table class="export-fin-table">
+                        <thead id="expCashFlowHead"></thead>
+                        <tbody id="expCashFlowBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PAGE 4: Working Capital Sources & Next Steps -->
+        <div class="export-page" id="exportPage4">
+            <div class="export-page-header">
+                <img src="black_registered@web copy.png" alt="billd" class="export-logo">
+                <div class="export-page-title-small">Working Capital Analysis</div>
+            </div>
+
+            <h2 class="export-section-title">Understanding Your Working Capital Options</h2>
+
+            <div class="export-stats-row">
+                <div class="export-stat-card">
+                    <img src="Style References/PNG/b_traffic cone.png" alt="" class="export-stat-icon">
+                    <div class="export-stat-value">46%</div>
+                    <div class="export-stat-label">of subcontractors cite cash flow as a substantial growth challenge</div>
+                </div>
+                <div class="export-stat-card">
+                    <img src="Style References/PNG/b_clock.png" alt="" class="export-stat-icon">
+                    <div class="export-stat-value">57 days</div>
+                    <div class="export-stat-label">average wait for payment after submitting a pay application</div>
+                </div>
+                <div class="export-stat-card">
+                    <img src="Style References/PNG/b_calendar.png" alt="" class="export-stat-icon">
+                    <div class="export-stat-value">3 months</div>
+                    <div class="export-stat-label">of expenses to cover before project payments arrive</div>
+                </div>
+            </div>
+
+            <div class="export-narrative">
+                <p>The key to managing this gap is building a diverse <strong>capital stack</strong> and deploying it strategically &mdash; from least flexible to most flexible. Each source below serves a different purpose. No single source is sufficient on its own.</p>
+            </div>
+
+            <div class="export-sources-grid">
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/b_contract.png" alt="" class="export-source-icon">
+                        <h4>Supplier Terms</h4>
+                    </div>
+                    <p><strong>Least Flexible</strong> &mdash; Net 30/60 payment terms with material suppliers. Limited to materials purchases only. No cash outlay upfront, but terms are rigid. Discounts for early payment (typically 2%) represent a real cost of using these terms.</p>
+                </div>
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/credit-card-icon.png" alt="" class="export-source-icon">
+                        <h4>Credit Card</h4>
+                    </div>
+                    <p><strong>Low Flexibility</strong> &mdash; Useful for daily operational expenses like fuel, tools, and small purchases. High interest rates (24-36% APR) make it expensive for large balances. Best used for short-term float and paid off monthly.</p>
+                </div>
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/b_safety.png" alt="" class="export-source-icon">
+                        <h4>Line of Credit</h4>
+                    </div>
+                    <p><strong>Medium Flexibility</strong> &mdash; Revolving credit facility from your bank. Protects bonding capacity and serves as a safety net. Typically 8-15% APR. Drawing too much can impact your borrowing capacity for new projects.</p>
+                </div>
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/b_materials.png" alt="" class="export-source-icon">
+                        <h4>Material Financing (Billd)</h4>
+                    </div>
+                    <p><strong>Medium-High Flexibility</strong> &mdash; Up to 120-day terms on material purchases at 3% monthly. Extends supplier payment without using your own credit facilities. Keeps your LOC and cash available for other needs.</p>
+                </div>
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/b_pay.png" alt="" class="export-source-icon">
+                        <h4>Pay App Advance (Billd)</h4>
+                    </div>
+                    <p><strong>Medium-High Flexibility</strong> &mdash; Advance on approved pay applications at 3% monthly. Accelerates receivables so you don't have to wait 60+ days for payment. Tied to specific project revenue.</p>
+                </div>
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/b_cycle.png" alt="" class="export-source-icon">
+                        <h4>Flex Line (Billd Line of Credit)</h4>
+                    </div>
+                    <p><strong>High Flexibility</strong> &mdash; Revolving credit line at 1.99% monthly. Purpose-built for construction subcontractors. Does not compete with your bank LOC or affect bonding capacity.</p>
+                </div>
+                <div class="export-source-card">
+                    <div class="export-source-card-header">
+                        <img src="Style References/PNG/b_large project.png" alt="" class="export-source-icon">
+                        <h4>Turner APP (GC Early Pay)</h4>
+                    </div>
+                    <p><strong>High Flexibility</strong> &mdash; General contractor early payment program at 1.99% monthly. Low cost and does not go on your balance sheet. Available for qualifying GC projects.</p>
+                </div>
+            </div>
+
+            <div class="export-principle-box">
+                <h3>The Bottom Line</h3>
+                <p id="expNarrativeConclusion">By diversifying your working capital sources and deploying capital from least to most flexible, you preserve your most valuable asset &mdash; cash &mdash; for the moments that matter most: unexpected opportunities, emergency expenses, and the financial strength that wins larger contracts.</p>
+            </div>
+
+            <div class="export-next-steps">
+                <img src="Style References/PNG/b_handshake.png" alt="" class="export-next-steps-icon">
+                <h3>Next Steps</h3>
+                <p>Contact your Billd representative to discuss how to optimize your working capital stack and preserve more cash for your business.</p>
+                <p><strong>billd.com</strong></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const icons = {
+            supplier: `<img src="Style References/PNG/b_contract.png" alt="Supplier Terms">`,
+            creditCard: `<img src="Style References/PNG/credit-card-icon.png" alt="Credit Card">`,
+            loc: `<img src="Style References/PNG/b_safety.png" alt="Line of Credit">`,
+            flexLine: `<img src="Style References/PNG/b_cycle.png" alt="Flex Line">`,
+            cash: `<img src="Style References/PNG/b_cash.png" alt="Cash">`,
+            cashOnHand: `<img src="Style References/PNG/b_vault.png" alt="Cash on Hand">`,
+            materialFinancing: `<img src="Style References/PNG/b_materials.png" alt="Material Financing">`,
+            payApp: `<img src="Style References/PNG/b_pay.png" alt="Pay App Advance">`,
+            turnerApp: `<img src="Style References/PNG/b_large project.png" alt="Turner APP">`
+        };
+
+        function parseNumber(str) {
+            if (typeof str === 'number') return str;
+            return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
+        }
+
+        function formatCurrency(num, decimals = 2) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }).format(num);
+        }
+
+        function toggleBilldFields() {
+            const badge = document.getElementById('billdToggle');
+            const fields = document.getElementById('billdFields');
+            badge.classList.toggle('collapsed');
+            fields.classList.toggle('collapsed');
+        }
+
+        const tabs = document.querySelectorAll('.tab');
+        const outputSections = {
+            discovery: document.getElementById('discoveryOutput'),
+            discoveryCost: document.getElementById('discoveryCostOutput'),
+            proposal: document.getElementById('proposalOutput'),
+            proposalCost: document.getElementById('proposalCostOutput'),
+            financial: document.getElementById('financialOutput'),
+            comparison: document.getElementById('comparisonOutput')
+        };
+        const billdOptions = document.getElementById('billdOptions');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const selected = tab.dataset.tab;
+                Object.values(outputSections).forEach(s => s.classList.remove('active'));
+                outputSections[selected].classList.add('active');
+
+                if (selected === 'proposal' || selected === 'proposalCost' || selected === 'comparison') {
+                    billdOptions.classList.add('show');
+                } else {
+                    billdOptions.classList.remove('show');
+                }
+            });
+        });
+
+        function renderBars(containerId, items, total, cashOnHand, cashOnHandContainerId) {
+            const barsContainer = document.getElementById(containerId);
+            barsContainer.innerHTML = '';
+
+            const visibleItems = items.filter(item => item.alwaysShow || item.value > 0);
+            const allPositiveValues = visibleItems.map(i => i.value).filter(v => v > 0);
+            allPositiveValues.push(Math.max(0, cashOnHand));
+            const maxValue = Math.max(...allPositiveValues, 1);
+
+            visibleItems.forEach((item) => {
+                const percent = total > 0 ? (item.value / total) * 100 : 0;
+                const barWidth = item.value > 0 ? (item.value / maxValue) * 100 : 0;
+                const isHighCash = item.isCash && percent > 40;
+                const warningClass = isHighCash ? ' warning' : '';
+                const barFill = item.value > 0 ? `<div class="bar-fill" style="width: ${barWidth}%"></div>` : '';
+
+                barsContainer.innerHTML += `
+                    <div class="bar-item${warningClass}">
+                        <div class="bar-header">
+                            <div class="bar-icon">${item.icon}</div>
+                            <div class="bar-label">${item.label}</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-track">${barFill}</div>
+                            <div class="bar-value">${formatCurrency(item.value)}</div>
+                        </div>
+                        <div class="bar-percent">${percent.toFixed(0)}% of total balance</div>
+                    </div>
+                `;
+            });
+
+            // Cash on Hand as green bar — rendered outside the chart area, aligned with bars
+            const cohContainer = document.getElementById(cashOnHandContainerId);
+            const cohValue = Math.max(0, cashOnHand);
+            const cohBarWidth = cohValue > 0 ? (cohValue / maxValue) * 100 : 0;
+            const cohBarFill = cohValue > 0 ? `<div class="bar-fill" style="width: ${cohBarWidth}%"></div>` : '';
+            cohContainer.innerHTML = `
+                <div class="breakdown-chart">
+                    <div class="arrow-column" style="visibility: hidden;">
+                        <div class="flex-label">Least<br>Flexible</div>
+                    </div>
+                    <div class="bars-column">
+                        <div class="bar-item green">
+                            <div class="bar-header">
+                                <div class="bar-icon">${icons.cashOnHand}</div>
+                                <div class="bar-label">Cash on Hand</div>
+                            </div>
+                            <div class="bar-row">
+                                <div class="bar-track">${cohBarFill}</div>
+                                <div class="bar-value">${formatCurrency(cohValue)}</div>
+                            </div>
+                            <div class="bar-percent">Preserved for emergencies & opportunities</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCostTable(bodyId, footId, items, totalBalance, totalMonthlyCost, blendedRate) {
+            const tbody = document.getElementById(bodyId);
+            const tfoot = document.getElementById(footId);
+
+            tbody.innerHTML = items
+                .filter(item => item.balance > 0)
+                .map(item => `
+                    <tr>
+                        <td>${item.label}</td>
+                        <td>${item.rate}</td>
+                        <td>${item.period}</td>
+                        <td>${formatCurrency(item.balance, 0)}</td>
+                        <td>${formatCurrency(item.monthlyCost, 0)}</td>
+                    </tr>
+                `).join('');
+
+            tfoot.innerHTML = `
+                <tr>
+                    <td colspan="3">Total</td>
+                    <td>${formatCurrency(totalBalance, 0)}</td>
+                    <td>${formatCurrency(totalMonthlyCost, 0)}</td>
+                </tr>
+                <tr class="blended-row">
+                    <td colspan="4">Blended Cost of Working Capital</td>
+                    <td>${(blendedRate * 100).toFixed(2)}%</td>
+                </tr>
+            `;
+        }
+
+        function renderFinancialStatement(data) {
+            const { monthlyRevenue, profitPercent, materialsPercent, laborPercent, overheadPercent,
+                    monthlyExpenses, dsoMonths, supplierDays, supplierTermsBalance,
+                    startingCash, ccBalance, locBalance } = data;
+
+            const months = 6;
+            const fmtC = (v) => formatCurrency(v, 0);
+            const negClass = (v) => '';
+
+            const profit = monthlyRevenue * profitPercent;
+            const materials = monthlyRevenue * materialsPercent;
+            const labor = monthlyRevenue * laborPercent;
+            const overhead = monthlyRevenue * overheadPercent;
+
+            // P&L
+            const pnlHead = document.getElementById('finPnlHead');
+            pnlHead.innerHTML = '<th>Month</th>' + Array.from({length: months}, (_, i) => `<th>${i + 1}</th>`).join('');
+
+            const pnlRows = [
+                { label: 'Revenue', values: Array(months).fill(monthlyRevenue) },
+                { label: 'Profit', values: Array(months).fill(profit) },
+                { label: 'Revenue minus Profit', values: Array(months).fill(monthlyExpenses), bold: true },
+                { label: 'Materials', values: Array(months).fill(materials), indent: true },
+                { label: 'Labor', values: Array(months).fill(labor), indent: true },
+                { label: 'Overhead', values: Array(months).fill(overhead), indent: true },
+                { label: 'Total Expenses', values: Array(months).fill(monthlyExpenses), total: true }
+            ];
+
+            document.getElementById('finPnlBody').innerHTML = pnlRows.map(row => {
+                const cls = row.total ? ' class="total-row"' : row.bold ? ' class="subtotal-row"' : row.indent ? ' class="indent"' : '';
+                return `<tr${cls}><td>${row.label}</td>${row.values.map(v => `<td>${fmtC(v)}</td>`).join('')}</tr>`;
+            }).join('');
+
+            // Cash Flow
+            const cfHead = document.getElementById('finCashFlowHead');
+            const dsoLabels = [];
+            for (let m = 1; m <= months; m++) {
+                const dayStart = (m - 1) * 30;
+                const dayEnd = m * 30;
+                if (m <= dsoMonths) {
+                    dsoLabels.push({ label: `${dayStart}-${dayEnd}`, pastDso: false });
+                } else {
+                    dsoLabels.push({ label: `${dayStart}+`, pastDso: true });
+                }
+            }
+
+            cfHead.innerHTML = `
+                <tr>
+                    <th>Cash Flow Statement</th>
+                    ${Array.from({length: months}, (_, i) => `<th>Month ${i + 1}</th>`).join('')}
+                </tr>
+                <tr>
+                    <td class="dso-header">Supplier Terms Days</td>
+                    ${dsoLabels.map(d => `<td class="dso-header">${d.label}</td>`).join('')}
+                </tr>
+            `;
+
+            // Build cash flow month by month
+            const cfData = [];
+            for (let m = 0; m < months; m++) {
+                const startCap = m === 0 ? 0 : cfData[m - 1].endingCap;
+                const cashIn = (m + 1) > dsoMonths ? monthlyExpenses : 0;
+                const totalOutflow = -monthlyExpenses;
+                const cumOutflow = (m === 0 ? 0 : cfData[m - 1].cumOutflow) + totalOutflow;
+                const endingCap = startCap + totalOutflow + cashIn;
+                cfData.push({ startCap, materials, labor, overhead, totalOutflow, cumOutflow, cashIn, endingCap });
+            }
+
+            const cfRows = [
+                { label: 'Starting Capital', values: cfData.map(d => d.startCap) },
+                { label: 'Materials', values: cfData.map(d => d.materials), indent: true },
+                { label: 'Labor', values: cfData.map(d => d.labor), indent: true },
+                { label: 'Overhead', values: cfData.map(d => d.overhead), indent: true },
+                { label: 'Total Monthly Cash Outflow', values: cfData.map(d => d.totalOutflow), bold: true },
+                { label: 'Cumulative Cash Outflow', values: cfData.map(d => d.cumOutflow), bold: true },
+                { label: 'Cash from Projects minus Profit', values: cfData.map(d => d.cashIn) },
+                { label: 'Ending Capital', values: cfData.map(d => d.endingCap), total: true }
+            ];
+
+            document.getElementById('finCashFlowBody').innerHTML = cfRows.map(row => {
+                const cls = row.total ? ' class="total-row"' : row.bold ? ' class="subtotal-row"' : row.indent ? ' class="indent"' : '';
+                return `<tr${cls}><td>${row.label}</td>${row.values.map(v => `<td${negClass(v)}>${fmtC(v)}</td>`).join('')}</tr>`;
+            }).join('');
+
+            // Balance Sheet
+            const bsHead = document.getElementById('finBsHead');
+            bsHead.innerHTML = '<th>Month</th>' + Array.from({length: months}, (_, i) => `<th>${i + 1}</th>`).join('');
+
+            const bsData = [];
+            for (let m = 1; m <= months; m++) {
+                const cash = startingCash;
+                const ar = Math.min(m, dsoMonths) * monthlyRevenue;
+                const totalAssets = cash + ar;
+                const cc = ccBalance;
+                const ap = supplierTermsBalance;
+                const totalLiab = cc + ap;
+                const equity = totalAssets - totalLiab;
+                const totalLE = totalLiab + equity;
+                bsData.push({ cash, ar, totalAssets, cc, ap, totalLiab, equity, totalLE });
+            }
+
+            const bsRows = [
+                { label: 'ASSETS', section: true },
+                { label: 'Cash', values: bsData.map(d => d.cash), indent: true },
+                { label: 'Accounts Receivable', values: bsData.map(d => d.ar), indent: true },
+                { label: 'Total Assets', values: bsData.map(d => d.totalAssets), bold: true },
+                { label: 'LIABILITIES', section: true },
+                { label: 'Credit Card', values: bsData.map(d => d.cc), indent: true },
+                { label: 'Accounts Payable - Supplier', values: bsData.map(d => d.ap), indent: true },
+                { label: 'Total Liabilities', values: bsData.map(d => d.totalLiab), bold: true },
+                { label: 'Equity', section: true },
+                { label: 'Other (AR Change - AP Change)', values: bsData.map(d => d.equity), indent: true },
+                { label: 'Total Equity', values: bsData.map(d => d.equity), bold: true },
+                { label: 'Total Liabilities & Equity', values: bsData.map(d => d.totalLE), total: true }
+            ];
+
+            document.getElementById('finBsBody').innerHTML = bsRows.map(row => {
+                if (row.section) {
+                    return `<tr class="section-header"><td>${row.label}</td>${'<td></td>'.repeat(months)}</tr>`;
+                }
+                const cls = row.total ? ' class="total-row"' : row.bold ? ' class="subtotal-row"' : row.indent ? ' class="indent"' : '';
+                return `<tr${cls}><td>${row.label}</td>${row.values.map(v => `<td${negClass(v)}>${fmtC(v)}</td>`).join('')}</tr>`;
+            }).join('');
+        }
+
+        function renderComparison(data) {
+            const { cashOnHandDiscovery, cashOnHandProposal, cashNeededDiscovery, cashNeededProposal,
+                    totalBalanceDiscovery, totalBalanceProposal,
+                    totalMonthlyCostDiscovery, totalMonthlyCostProposal,
+                    blendedRateDiscovery, blendedRateProposal } = data;
+
+            const cashImprovement = cashOnHandProposal - cashOnHandDiscovery;
+            const costDelta = totalMonthlyCostProposal - totalMonthlyCostDiscovery;
+            const rateDelta = blendedRateProposal - blendedRateDiscovery;
+
+            // Highlight box
+            document.getElementById('compCashImprovement').textContent =
+                '+' + formatCurrency(Math.max(0, cashImprovement), 0);
+            document.getElementById('compCostDelta').textContent =
+                costDelta > 0
+                    ? 'for an increase of ' + (rateDelta * 100).toFixed(2) + '% blended cost of capital'
+                    : 'for a decrease of ' + Math.abs(rateDelta * 100).toFixed(2) + '% blended cost of capital';
+
+            // Comparison table
+            const fmtC = (v) => formatCurrency(v, 0);
+            const rows = [
+                {
+                    label: 'Cash on Hand',
+                    current: fmtC(cashOnHandDiscovery),
+                    proposal: fmtC(cashOnHandProposal),
+                    change: cashImprovement,
+                    format: 'currency',
+                    positive: true
+                },
+                {
+                    label: 'Cash Used for Working Capital',
+                    current: fmtC(Math.max(0, cashNeededDiscovery)),
+                    proposal: fmtC(Math.max(0, cashNeededProposal)),
+                    change: Math.max(0, cashNeededProposal) - Math.max(0, cashNeededDiscovery),
+                    format: 'currency',
+                    positive: false
+                },
+                {
+                    label: 'Total Working Capital Balance',
+                    current: fmtC(totalBalanceDiscovery),
+                    proposal: fmtC(totalBalanceProposal),
+                    change: totalBalanceProposal - totalBalanceDiscovery,
+                    format: 'currency',
+                    positive: true
+                },
+                {
+                    label: 'Monthly Financing Cost',
+                    current: fmtC(totalMonthlyCostDiscovery),
+                    proposal: fmtC(totalMonthlyCostProposal),
+                    change: costDelta,
+                    format: 'currency',
+                    positive: false
+                },
+                {
+                    label: 'Blended Cost of Capital',
+                    current: (blendedRateDiscovery * 100).toFixed(2) + '%',
+                    proposal: (blendedRateProposal * 100).toFixed(2) + '%',
+                    change: rateDelta,
+                    format: 'percent',
+                    positive: false
+                }
+            ];
+
+            document.getElementById('comparisonTableBody').innerHTML = rows.map(row => {
+                const changeVal = row.format === 'percent'
+                    ? (row.change >= 0 ? '+' : '') + (row.change * 100).toFixed(2) + '%'
+                    : (row.change >= 0 ? '+' : '-') + fmtC(Math.abs(row.change));
+
+                // Green when the change is favorable: positive=true means increase is good, positive=false means decrease is good
+                const isFavorable = row.positive ? row.change > 0 : row.change < 0;
+                const changeClass = isFavorable ? 'comparison-table-change-positive' : 'comparison-table-change-neutral';
+
+                return `<tr>
+                    <td>${row.label}</td>
+                    <td>${row.current}</td>
+                    <td>${row.proposal}</td>
+                    <td class="${changeClass}">${changeVal}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function calculate() {
+            const annualRevenue = parseNumber(document.getElementById('annualRevenue').value);
+            const monthlyRevenue = annualRevenue / 12;
+            
+            const locBalance = parseNumber(document.getElementById('locBalance').value);
+            const locRate = parseNumber(document.getElementById('locRate').value) / 100;
+            
+            const ccBalance = parseNumber(document.getElementById('ccBalance').value);
+            const ccRate = parseNumber(document.getElementById('ccRate').value) / 100;
+            
+            const materialsPercent = parseNumber(document.getElementById('materialsPercent').value) / 100;
+            const laborPercent = parseNumber(document.getElementById('laborPercent').value) / 100;
+            const overheadPercent = parseNumber(document.getElementById('overheadPercent').value) / 100;
+            const profitPercent = 1 - materialsPercent - laborPercent - overheadPercent;
+            
+            document.getElementById('profitPercent').value = (profitPercent * 100).toFixed(1);
+            
+            const dso = parseNumber(document.getElementById('dso').value);
+            const supplierDays = parseNumber(document.getElementById('supplierDays').value);
+            const supplierDiscount = parseNumber(document.getElementById('supplierDiscount').value) / 100;
+            
+            const materialFinancing = parseNumber(document.getElementById('materialFinancing').value);
+            const payAppAdvance = parseNumber(document.getElementById('payAppAdvance').value);
+            const flexLine = parseNumber(document.getElementById('flexLine').value);
+            const turnerApp = parseNumber(document.getElementById('turnerApp').value);
+            
+            const materialsOutlay = monthlyRevenue * materialsPercent;
+            const supplierTermsBalance = supplierDays >= 30 ? materialsOutlay * (supplierDays / 30) : 0;
+            
+            const dsoMonths = Math.ceil(dso / 30);
+            const monthlyExpenses = monthlyRevenue * (1 - profitPercent);
+            const maxDeficit = monthlyExpenses * dsoMonths;
+            
+            // DISCOVERY
+            const cashNeededDiscovery = maxDeficit - locBalance - supplierTermsBalance - ccBalance;
+            const totalBalanceDiscovery = locBalance + supplierTermsBalance + ccBalance + Math.max(0, cashNeededDiscovery);
+            
+            const locMonthlyCost = (locRate / 12) * locBalance;
+            const ccMonthlyCost = (ccRate / 12) * ccBalance;
+            const supplierMonthlyCost = supplierDiscount * supplierTermsBalance;
+            const cashOpportunityCost = parseNumber(document.getElementById('cashCostRate').value) / 100;
+            const cashMonthlyCostDiscovery = (cashOpportunityCost / 12) * Math.max(0, cashNeededDiscovery);
+            
+            const totalMonthlyCostDiscovery = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost + cashMonthlyCostDiscovery;
+            const blendedRateDiscovery = (totalMonthlyCostDiscovery * 12) / annualRevenue;
+            
+            document.getElementById('totalBalanceDiscovery').textContent = formatCurrency(totalBalanceDiscovery);
+            
+            const cashPercentDiscovery = totalBalanceDiscovery > 0 ? (Math.max(0, cashNeededDiscovery) / totalBalanceDiscovery) * 100 : 0;
+            document.getElementById('cashWarningDiscovery').style.display = cashPercentDiscovery > 40 ? 'block' : 'none';
+            
+            const startingCash = parseNumber(document.getElementById('cashBalance').value);
+            
+            const discoveryItems = [
+                { label: 'Supplier Terms', value: supplierTermsBalance, icon: icons.supplier, isCash: false, alwaysShow: true },
+                { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: true },
+                { label: 'Line of Credit', value: locBalance, icon: icons.loc, isCash: false, alwaysShow: true },
+                { label: 'Cash', value: Math.max(0, cashNeededDiscovery), icon: icons.cash, isCash: true, alwaysShow: false }
+            ];
+
+            // Discovery C12: Available Cash = Starting Cash Balance (inputs!B19)
+            const cashOnHandDiscovery = startingCash;
+
+            renderBars('barsDiscovery', discoveryItems, totalBalanceDiscovery, cashOnHandDiscovery, 'cashOnHandDiscoveryContainer');
+            
+            // PROPOSAL
+            const billdTotal = materialFinancing + payAppAdvance + flexLine + turnerApp;
+            const cashNeededProposal = maxDeficit - locBalance - supplierTermsBalance - ccBalance - billdTotal;
+            const totalBalanceProposal = locBalance + supplierTermsBalance + ccBalance + billdTotal + Math.max(0, cashNeededProposal);
+
+            const materialFinancingCost = 0.03 * materialFinancing;
+            const payAppCost = 0.03 * payAppAdvance;
+            const flexLineCost = 0.0199 * flexLine;
+            const turnerCost = 0.0199 * turnerApp;
+            const cashMonthlyCostProposal = (cashOpportunityCost / 12) * Math.max(0, cashNeededProposal);
+
+            const totalMonthlyCostProposal = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost +
+                                              materialFinancingCost + payAppCost + flexLineCost + turnerCost + cashMonthlyCostProposal;
+            const blendedRateProposal = (totalMonthlyCostProposal * 12) / annualRevenue;
+            
+            document.getElementById('totalBalanceProposal').textContent = formatCurrency(totalBalanceProposal);
+            
+            const proposalItems = [
+                { label: 'Supplier Terms', value: supplierTermsBalance, icon: icons.supplier, isCash: false, alwaysShow: true },
+                { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: true },
+                { label: 'Line of Credit', value: locBalance, icon: icons.loc, isCash: false, alwaysShow: true },
+                { label: 'Material Financing', value: materialFinancing, icon: icons.materialFinancing, isCash: false, alwaysShow: false },
+                { label: 'Pay App Advance', value: payAppAdvance, icon: icons.payApp, isCash: false, alwaysShow: false },
+                { label: 'Flex Line', value: flexLine, icon: icons.flexLine, isCash: false, alwaysShow: false },
+                { label: 'Turner APP', value: turnerApp, icon: icons.turnerApp, isCash: false, alwaysShow: false },
+                { label: 'Cash', value: Math.max(0, cashNeededProposal), icon: icons.cash, isCash: true, alwaysShow: false }
+            ];
+
+            // Proposal C15: Available Cash = Discovery Cash + (Discovery Cash Used - Proposal Cash Used)
+            const cashFreedUp = Math.max(0, cashNeededDiscovery) - Math.max(0, cashNeededProposal);
+            const cashOnHandProposal = startingCash + cashFreedUp;
+
+            renderBars('barsProposal', proposalItems, totalBalanceProposal, cashOnHandProposal, 'cashOnHandProposalContainer');
+
+            // DISCOVERY COST TABLE
+            const discoveryCostItems = [
+                { label: 'Line of Credit', rate: (locRate * 100).toFixed(2) + '%', period: 'Yearly', balance: locBalance, monthlyCost: locMonthlyCost },
+                { label: 'Supplier Terms', rate: (supplierDiscount * 100).toFixed(2) + '%', period: 'Monthly', balance: supplierTermsBalance, monthlyCost: supplierMonthlyCost },
+                { label: 'Credit Card', rate: (ccRate * 100).toFixed(2) + '%', period: 'Yearly', balance: ccBalance, monthlyCost: ccMonthlyCost },
+                { label: 'Cash', rate: (cashOpportunityCost * 100).toFixed(2) + '%', period: 'Yearly', balance: Math.max(0, cashNeededDiscovery), monthlyCost: cashMonthlyCostDiscovery }
+            ];
+
+            renderCostTable('costTableDiscoveryBody', 'costTableDiscoveryFoot', discoveryCostItems, totalBalanceDiscovery, totalMonthlyCostDiscovery, blendedRateDiscovery);
+
+            // PROPOSAL COST TABLE
+            const proposalCostItems = [
+                { label: 'Line of Credit', rate: (locRate * 100).toFixed(2) + '%', period: 'Yearly', balance: locBalance, monthlyCost: locMonthlyCost },
+                { label: 'Supplier Terms', rate: (supplierDiscount * 100).toFixed(2) + '%', period: 'Monthly', balance: supplierTermsBalance, monthlyCost: supplierMonthlyCost },
+                { label: 'Credit Card', rate: (ccRate * 100).toFixed(2) + '%', period: 'Yearly', balance: ccBalance, monthlyCost: ccMonthlyCost },
+                { label: 'Material Financing', rate: '3.00%', period: 'Monthly', balance: materialFinancing, monthlyCost: materialFinancingCost },
+                { label: 'Pay App Advance', rate: '3.00%', period: 'Monthly', balance: payAppAdvance, monthlyCost: payAppCost },
+                { label: 'Flex Line', rate: '1.99%', period: 'Monthly', balance: flexLine, monthlyCost: flexLineCost },
+                { label: 'Turner APP', rate: '1.99%', period: 'Monthly', balance: turnerApp, monthlyCost: turnerCost },
+                { label: 'Cash', rate: (cashOpportunityCost * 100).toFixed(2) + '%', period: 'Yearly', balance: Math.max(0, cashNeededProposal), monthlyCost: cashMonthlyCostProposal }
+            ];
+
+            renderCostTable('costTableProposalBody', 'costTableProposalFoot', proposalCostItems, totalBalanceProposal, totalMonthlyCostProposal, blendedRateProposal);
+
+            // FINANCIAL STATEMENT
+            renderFinancialStatement({
+                monthlyRevenue, profitPercent, materialsPercent, laborPercent, overheadPercent,
+                monthlyExpenses, dsoMonths, supplierDays, supplierTermsBalance,
+                startingCash, ccBalance, locBalance
+            });
+
+            // COMPARISON
+            renderComparison({
+                cashOnHandDiscovery,
+                cashOnHandProposal,
+                cashNeededDiscovery,
+                cashNeededProposal,
+                totalBalanceDiscovery,
+                totalBalanceProposal,
+                totalMonthlyCostDiscovery,
+                totalMonthlyCostProposal,
+                blendedRateDiscovery,
+                blendedRateProposal
+            });
+        }
+
+        function exportReport() {
+            // Ensure calculations are current
+            calculate();
+
+            const fmtC = (v, d) => formatCurrency(v, d || 0);
+
+            // Read inputs
+            const annualRevenue = parseNumber(document.getElementById('annualRevenue').value);
+            const monthlyRevenue = annualRevenue / 12;
+            const materialsPercent = parseNumber(document.getElementById('materialsPercent').value) / 100;
+            const laborPercent = parseNumber(document.getElementById('laborPercent').value) / 100;
+            const overheadPercent = parseNumber(document.getElementById('overheadPercent').value) / 100;
+            const profitPercent = 1 - materialsPercent - laborPercent - overheadPercent;
+            const dso = parseNumber(document.getElementById('dso').value);
+            const dsoMonths = Math.ceil(dso / 30);
+            const monthlyExpenses = monthlyRevenue * (1 - profitPercent);
+            const maxDeficit = monthlyExpenses * dsoMonths;
+
+            const locBalance = parseNumber(document.getElementById('locBalance').value);
+            const locRate = parseNumber(document.getElementById('locRate').value) / 100;
+            const ccBalance = parseNumber(document.getElementById('ccBalance').value);
+            const ccRate = parseNumber(document.getElementById('ccRate').value) / 100;
+            const startingCash = parseNumber(document.getElementById('cashBalance').value);
+            const cashOpportunityCost = parseNumber(document.getElementById('cashCostRate').value) / 100;
+            const supplierDays = parseNumber(document.getElementById('supplierDays').value);
+            const supplierDiscount = parseNumber(document.getElementById('supplierDiscount').value) / 100;
+            const materialsOutlay = monthlyRevenue * materialsPercent;
+            const supplierTermsBalance = supplierDays >= 30 ? materialsOutlay * (supplierDays / 30) : 0;
+
+            const materialFinancing = parseNumber(document.getElementById('materialFinancing').value);
+            const payAppAdvance = parseNumber(document.getElementById('payAppAdvance').value);
+            const flexLine = parseNumber(document.getElementById('flexLine').value);
+            const turnerApp = parseNumber(document.getElementById('turnerApp').value);
+
+            // Discovery calculations
+            const cashNeededDisc = maxDeficit - locBalance - supplierTermsBalance - ccBalance;
+            const totalBalanceDisc = locBalance + supplierTermsBalance + ccBalance + Math.max(0, cashNeededDisc);
+            const cashOnHandDisc = startingCash;
+
+            // Proposal calculations
+            const billdTotal = materialFinancing + payAppAdvance + flexLine + turnerApp;
+            const cashNeededProp = maxDeficit - locBalance - supplierTermsBalance - ccBalance - billdTotal;
+            const cashFreedUp = Math.max(0, cashNeededDisc) - Math.max(0, cashNeededProp);
+            const cashOnHandProp = startingCash + cashFreedUp;
+            const totalBalanceProp = locBalance + supplierTermsBalance + ccBalance + billdTotal + Math.max(0, cashNeededProp);
+
+            // Cost calculations
+            const locMonthlyCost = (locRate / 12) * locBalance;
+            const ccMonthlyCost = (ccRate / 12) * ccBalance;
+            const supplierMonthlyCost = supplierDiscount * supplierTermsBalance;
+            const cashMonthlyCostDisc = (cashOpportunityCost / 12) * Math.max(0, cashNeededDisc);
+            const totalMonthlyCostDisc = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost + cashMonthlyCostDisc;
+            const blendedRateDisc = annualRevenue > 0 ? (totalMonthlyCostDisc * 12) / annualRevenue : 0;
+
+            const matFinCost = 0.03 * materialFinancing;
+            const payAppCost = 0.03 * payAppAdvance;
+            const flexLineCost = 0.0199 * flexLine;
+            const turnerCost = 0.0199 * turnerApp;
+            const cashMonthlyCostProp = (cashOpportunityCost / 12) * Math.max(0, cashNeededProp);
+            const totalMonthlyCostProp = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost +
+                matFinCost + payAppCost + flexLineCost + turnerCost + cashMonthlyCostProp;
+            const blendedRateProp = annualRevenue > 0 ? (totalMonthlyCostProp * 12) / annualRevenue : 0;
+
+            const cashImprovement = cashOnHandProp - cashOnHandDisc;
+            const costDelta = totalMonthlyCostProp - totalMonthlyCostDisc;
+            const rateDelta = blendedRateProp - blendedRateDisc;
+
+            // Derived narrative values
+            const cashUsedPercent = totalBalanceDisc > 0 ? (Math.max(0, cashNeededDisc) / totalBalanceDisc * 100) : 0;
+            const cashUsedPercentProp = totalBalanceProp > 0 ? (Math.max(0, cashNeededProp) / totalBalanceProp * 100) : 0;
+            const companyName = document.getElementById('companyName').value || 'your company';
+            const preparedBy = document.getElementById('preparedBy').value;
+
+            // === PAGE 1: The Challenge & Your Numbers ===
+            document.getElementById('exportDate').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('exportCompany').textContent = document.getElementById('companyName').value || 'Prospective Client';
+            document.getElementById('exportPrepared').textContent = preparedBy ? 'Prepared for ' + (document.getElementById('companyName').value || 'Prospective Client') + ' by ' + preparedBy : '';
+
+            document.getElementById('expAnnualRevenue').textContent = fmtC(annualRevenue);
+            document.getElementById('expMonthlyExpenses').textContent = fmtC(monthlyExpenses);
+            document.getElementById('expDSO').textContent = dso + ' days';
+            document.getElementById('expTotalWC').textContent = fmtC(maxDeficit);
+
+            // Page 1 opening narrative
+            document.getElementById('expNarrativePage1').innerHTML = `
+                <p>Cash flow in construction is simple but unforgiving. In the first 30 days of a project, you pay for materials, labor, and overhead. When you get paid ${dso} days later, that creates a <strong>${dsoMonths}-month gap</strong> where expenses must be covered by working capital. For ${companyName}, with ${fmtC(monthlyExpenses)} in monthly expenses, that gap amounts to <strong>${fmtC(maxDeficit)}</strong> in working capital that must come from somewhere.</p>
+                <p>The question is not <em>whether</em> you need working capital &mdash; it's <em>where</em> it comes from, and what that costs you in flexibility.</p>
+            `;
+
+            // Gap analysis narrative
+            const existingWC = locBalance + supplierTermsBalance + ccBalance;
+            const gap = maxDeficit - existingWC;
+            document.getElementById('expNarrativeGap').innerHTML = gap > 0
+                ? `<p>Based on your current capital sources, you have <strong>${fmtC(existingWC)}</strong> in non-cash working capital available. That leaves a <strong>${fmtC(gap)} gap</strong> that must be filled by cash &mdash; your most flexible and most valuable resource.</p>`
+                : `<p>Your current capital sources of <strong>${fmtC(existingWC)}</strong> cover the ${fmtC(maxDeficit)} working capital need. However, this analysis examines whether your capital stack is optimally structured to preserve maximum flexibility.</p>`;
+
+            // Current stack table
+            const flexLabels = { 'Supplier Terms': 'Least', 'Credit Card': 'Low', 'Line of Credit': 'Medium', 'Cash': 'Most' };
+            const stackSources = [
+                { label: 'Supplier Terms', flex: 'Least', balance: supplierTermsBalance },
+                { label: 'Credit Card', flex: 'Low', balance: ccBalance },
+                { label: 'Line of Credit', flex: 'Medium', balance: locBalance },
+                { label: 'Cash', flex: 'Most', balance: Math.max(0, cashNeededDisc) },
+            ];
+            document.getElementById('expStackBody').innerHTML = stackSources
+                .filter(s => s.balance > 0)
+                .map(s => `<tr><td>${s.label}</td><td>${s.flex}</td><td>${fmtC(s.balance)}</td></tr>`)
+                .join('');
+
+            // Current state assessment
+            const cashAssessment = cashUsedPercent > 40
+                ? `<p><strong>Key finding:</strong> Cash currently accounts for <strong>${cashUsedPercent.toFixed(0)}%</strong> of your working capital. This is a significant concern. Cash is your most flexible capital &mdash; it can cover emergencies, fund new opportunities, and demonstrate financial strength to general contractors evaluating you for larger projects. When it is tied up in routine working capital, that flexibility disappears.</p>`
+                : `<p>Cash currently represents <strong>${cashUsedPercent.toFixed(0)}%</strong> of your working capital usage, which is within a manageable range. However, there is still an opportunity to further reduce cash reliance and preserve more flexibility.</p>`;
+            document.getElementById('expNarrativeCurrentAssessment').innerHTML = cashAssessment;
+
+            // === PAGE 2: The Recommendation ===
+            // Build list of proposed Billd products
+            const billdProducts = [];
+            if (materialFinancing > 0) billdProducts.push(`${fmtC(materialFinancing)} in Material Financing`);
+            if (payAppAdvance > 0) billdProducts.push(`${fmtC(payAppAdvance)} in Pay App Advances`);
+            if (flexLine > 0) billdProducts.push(`${fmtC(flexLine)} Flex Line`);
+            if (turnerApp > 0) billdProducts.push(`${fmtC(turnerApp)} Turner APP`);
+            const billdList = billdProducts.length > 0 ? billdProducts.join(', ') : 'Billd financing products';
+
+            document.getElementById('expNarrativeRecommendation').innerHTML = `
+                <p>The principle behind a strong capital stack is straightforward: <strong>deploy capital from least flexible to most flexible.</strong> Use rigid, purpose-specific sources first &mdash; supplier terms for materials, credit cards for daily expenses &mdash; and preserve your most flexible capital (cash) as a true last resort.</p>
+                <p>By introducing ${billdList} into your capital stack, we can shift <strong>${fmtC(Math.max(0, cashImprovement))}</strong> out of working capital and back into your cash reserves. Here is what that looks like:</p>
+            `;
+
+            document.getElementById('expCashCurrent').textContent = fmtC(cashOnHandDisc);
+            document.getElementById('expCashProposal').textContent = fmtC(cashOnHandProp);
+            document.getElementById('expCashDelta').textContent = '+' + fmtC(Math.max(0, cashImprovement));
+
+            // Trade-off narrative
+            document.getElementById('expNarrativeTradeoff').innerHTML = `
+                <p>This improvement comes at a blended rate increase of just <strong>${(rateDelta * 100).toFixed(2)}%</strong>. The goal is not to minimize cost at all costs &mdash; it is to preserve the flexibility that allows your business to respond to both opportunities and challenges. A small, predictable financing cost is far less damaging than being caught without cash when a large material order, an unexpected delay, or a growth opportunity presents itself.</p>
+            `;
+
+            // Comparison table
+            const compRows = [
+                { label: 'Cash on Hand', current: fmtC(cashOnHandDisc), prop: fmtC(cashOnHandProp), change: '+' + fmtC(Math.max(0, cashImprovement)) },
+                { label: 'Cash Used for Working Capital', current: fmtC(Math.max(0, cashNeededDisc)), prop: fmtC(Math.max(0, cashNeededProp)), change: fmtC(Math.max(0, cashNeededProp) - Math.max(0, cashNeededDisc)) },
+                { label: 'Total Working Capital', current: fmtC(totalBalanceDisc), prop: fmtC(totalBalanceProp), change: '+' + fmtC(totalBalanceProp - totalBalanceDisc) },
+                { label: 'Monthly Financing Cost', current: fmtC(totalMonthlyCostDisc), prop: fmtC(totalMonthlyCostProp), change: '+' + fmtC(costDelta) },
+                { label: 'Blended Cost of Capital', current: (blendedRateDisc * 100).toFixed(2) + '%', prop: (blendedRateProp * 100).toFixed(2) + '%', change: '+' + (rateDelta * 100).toFixed(2) + '%' }
+            ];
+            document.getElementById('expComparisonBody').innerHTML = compRows.map(r =>
+                `<tr><td>${r.label}</td><td>${r.current}</td><td>${r.prop}</td><td>${r.change}</td></tr>`
+            ).join('');
+
+            // Bottom line
+            document.getElementById('expNarrativeBottomLine').innerHTML = `
+                <p>Put simply: for a <strong>${(rateDelta * 100).toFixed(2)}%</strong> increase in blended cost, ${companyName} preserves <strong>${fmtC(Math.max(0, cashImprovement))}</strong> more in available cash. That cash remains available for emergencies, opportunities, and the financial flexibility that positions your business for growth.</p>
+            `;
+
+            // === PAGE 3: Cost Breakdown & Financials ===
+            document.getElementById('expNarrativeCost').innerHTML = `
+                <p>Every source of working capital has a cost. The tables below break down what each source costs today, and what the blended cost looks like with Billd financing in the mix. The key insight: while adding financing sources increases total monthly cost modestly, the reduction in cash deployed more than compensates in preserved flexibility.</p>
+            `;
+
+            function buildCostRows(items) {
+                return items.filter(i => i.balance > 0).map(i =>
+                    `<tr><td>${i.label}</td><td>${i.rate}</td><td>${fmtC(i.balance)}</td><td>${fmtC(i.monthlyCost)}</td></tr>`
+                ).join('');
+            }
+            function buildCostFoot(totalBalance, totalCost, blendedRate) {
+                return `<tr><td colspan="2"><strong>Total</strong></td><td>${fmtC(totalBalance)}</td><td>${fmtC(totalCost)}</td></tr>
+                        <tr><td colspan="3" style="font-weight:600;color:#4A90D9;border-top:none;">Blended Cost</td><td style="font-weight:600;color:#4A90D9;border-top:none;">${(blendedRate * 100).toFixed(2)}%</td></tr>`;
+            }
+
+            const discCostItems = [
+                { label: 'Line of Credit', rate: (locRate * 100).toFixed(1) + '%', balance: locBalance, monthlyCost: locMonthlyCost },
+                { label: 'Supplier Terms', rate: (supplierDiscount * 100).toFixed(1) + '%', balance: supplierTermsBalance, monthlyCost: supplierMonthlyCost },
+                { label: 'Credit Card', rate: (ccRate * 100).toFixed(1) + '%', balance: ccBalance, monthlyCost: ccMonthlyCost },
+                { label: 'Cash', rate: (cashOpportunityCost * 100).toFixed(1) + '%', balance: Math.max(0, cashNeededDisc), monthlyCost: cashMonthlyCostDisc }
+            ];
+            const propCostItems = [
+                { label: 'Line of Credit', rate: (locRate * 100).toFixed(1) + '%', balance: locBalance, monthlyCost: locMonthlyCost },
+                { label: 'Supplier Terms', rate: (supplierDiscount * 100).toFixed(1) + '%', balance: supplierTermsBalance, monthlyCost: supplierMonthlyCost },
+                { label: 'Credit Card', rate: (ccRate * 100).toFixed(1) + '%', balance: ccBalance, monthlyCost: ccMonthlyCost },
+                { label: 'Material Fin.', rate: '3.0%', balance: materialFinancing, monthlyCost: matFinCost },
+                { label: 'Pay App Adv.', rate: '3.0%', balance: payAppAdvance, monthlyCost: payAppCost },
+                { label: 'Flex Line', rate: '1.99%', balance: flexLine, monthlyCost: flexLineCost },
+                { label: 'Turner APP', rate: '1.99%', balance: turnerApp, monthlyCost: turnerCost },
+                { label: 'Cash', rate: (cashOpportunityCost * 100).toFixed(1) + '%', balance: Math.max(0, cashNeededProp), monthlyCost: cashMonthlyCostProp }
+            ];
+
+            document.getElementById('expCostCurrentBody').innerHTML = buildCostRows(discCostItems);
+            document.getElementById('expCostCurrentFoot').innerHTML = buildCostFoot(totalBalanceDisc, totalMonthlyCostDisc, blendedRateDisc);
+            document.getElementById('expCostProposalBody').innerHTML = buildCostRows(propCostItems);
+            document.getElementById('expCostProposalFoot').innerHTML = buildCostFoot(totalBalanceProp, totalMonthlyCostProp, blendedRateProp);
+
+            // Cost explanation
+            document.getElementById('expNarrativeCostExplain').innerHTML = `
+                <p>Your current blended cost of capital is <strong>${(blendedRateDisc * 100).toFixed(2)}%</strong>. With the proposed Billd financing, the blended cost moves to <strong>${(blendedRateProp * 100).toFixed(2)}%</strong>. This ${(rateDelta * 100).toFixed(2)}% increase is the cost of preserving ${fmtC(Math.max(0, cashImprovement))} in cash flexibility &mdash; a strategic trade-off that strengthens your overall financial position.</p>
+            `;
+
+            // Financial snapshot narrative
+            document.getElementById('expNarrativeFinancial').innerHTML = `
+                <p>At ${fmtC(annualRevenue)} in annual revenue with a ${(profitPercent * 100).toFixed(0)}% profit margin, ${companyName} generates ${fmtC(monthlyRevenue * profitPercent)} in monthly profit. The cash flow projection below shows how expenses accumulate over the first ${dsoMonths} months before project payments begin, creating the working capital gap this analysis addresses.</p>
+            `;
+
+            // P&L
+            const materials = monthlyRevenue * materialsPercent;
+            const labor = monthlyRevenue * laborPercent;
+            const overhead = monthlyRevenue * overheadPercent;
+            const profit = monthlyRevenue * profitPercent;
+            document.getElementById('expPnlBody').innerHTML = [
+                { label: 'Revenue', value: monthlyRevenue },
+                { label: 'Materials', value: materials, indent: true },
+                { label: 'Labor', value: labor, indent: true },
+                { label: 'Overhead', value: overhead, indent: true },
+                { label: 'Total Expenses', value: monthlyExpenses, bold: true },
+                { label: 'Net Profit', value: profit, bold: true }
+            ].map(r => {
+                const cls = r.bold ? ' class="subtotal-row"' : r.indent ? ' class="indent"' : '';
+                return `<tr${cls}><td>${r.label}</td><td>${fmtC(r.value)}</td></tr>`;
+            }).join('');
+
+            // Cash flow (months 1-3)
+            document.getElementById('expCashFlowHead').innerHTML =
+                '<tr><th></th>' + [1, 2, 3].map(m => `<th>Mo. ${m}</th>`).join('') + '</tr>';
+            const cfData3 = [];
+            for (let m = 0; m < 3; m++) {
+                const startCap = m === 0 ? 0 : cfData3[m - 1].endingCap;
+                const cashIn = (m + 1) > dsoMonths ? monthlyExpenses : 0;
+                const endingCap = startCap - monthlyExpenses + cashIn;
+                cfData3.push({ startCap, outflow: -monthlyExpenses, cashIn, endingCap });
+            }
+            document.getElementById('expCashFlowBody').innerHTML = [
+                { label: 'Starting', values: cfData3.map(d => d.startCap) },
+                { label: 'Outflow', values: cfData3.map(d => d.outflow), indent: true },
+                { label: 'Cash In', values: cfData3.map(d => d.cashIn) },
+                { label: 'Ending', values: cfData3.map(d => d.endingCap), bold: true }
+            ].map(r => {
+                const cls = r.bold ? ' class="total-row"' : r.indent ? ' class="indent"' : '';
+                return `<tr${cls}><td>${r.label}</td>${r.values.map(v => `<td>${fmtC(v)}</td>`).join('')}</tr>`;
+            }).join('');
+
+            // Page 4 conclusion (dynamic)
+            document.getElementById('expNarrativeConclusion').innerHTML = `
+                For ${companyName}, this means preserving <strong>${fmtC(Math.max(0, cashImprovement))}</strong> in cash that would otherwise be consumed by working capital needs. That cash remains available for the moments that matter most &mdash; unexpected opportunities, emergency expenses, and the financial strength that wins larger contracts. The cost of this flexibility: just a <strong>${(rateDelta * 100).toFixed(2)}%</strong> increase in your blended cost of capital.
+            `;
+
+            // Trigger print
+            window.print();
+        }
+
+        const currencyInputIds = ['annualRevenue', 'locBalance', 'ccBalance', 'cashBalance',
+                                    'materialFinancing', 'payAppAdvance', 'flexLine', 'turnerApp'];
+
+        function formatInputWithCommas(input) {
+            const raw = input.value.replace(/[^0-9]/g, '');
+            if (raw === '') { input.value = ''; return; }
+            input.value = parseInt(raw, 10).toLocaleString('en-US');
+        }
+
+        document.querySelectorAll('.form-input:not([readonly])').forEach(input => {
+            input.addEventListener('input', () => {
+                if (currencyInputIds.includes(input.id)) {
+                    const pos = input.selectionStart;
+                    const oldLen = input.value.length;
+                    formatInputWithCommas(input);
+                    const newLen = input.value.length;
+                    input.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
+                }
+                calculate();
+            });
+            input.addEventListener('change', calculate);
+        });
+
+        calculate();
+    </script>
+</body>
+</html>
