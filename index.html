@@ -1311,32 +1311,36 @@
                                 <label>Material Financing <span class="label-suffix">($)</span></label>
                                 <div class="input-row">
                                     <input type="text" id="materialFinancing" class="form-input highlight" value="0">
-                                    <input type="text" class="form-input small calculated" value="3%" readonly>
+                                    <input type="text" id="materialFinancingRate" class="form-input highlight small" value="3">
+                                    <span class="input-suffix">%</span>
                                 </div>
-                                <div class="hint">Up to 120-day terms at 3% monthly</div>
+                                <div class="hint">Up to 120-day terms</div>
                             </div>
 
                             <div class="form-group">
                                 <label>Pay App Advance <span class="label-suffix">($)</span></label>
                                 <div class="input-row">
                                     <input type="text" id="payAppAdvance" class="form-input highlight" value="0">
-                                    <input type="text" class="form-input small calculated" value="3%" readonly>
+                                    <input type="text" id="payAppRate" class="form-input highlight small" value="3">
+                                    <span class="input-suffix">%</span>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>Flex Line <span class="label-suffix">($)</span></label>
                                 <div class="input-row">
-                                    <input type="text" id="flexLine" class="form-input highlight" value="350,000">
-                                    <input type="text" class="form-input small calculated" value="1.99%" readonly>
+                                    <input type="text" id="flexLine" class="form-input highlight" value="0">
+                                    <input type="text" id="flexLineRate" class="form-input highlight small" value="2">
+                                    <span class="input-suffix">%</span>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>Turner APP <span class="label-suffix">($)</span></label>
                                 <div class="input-row">
-                                    <input type="text" id="turnerApp" class="form-input highlight" value="200,000">
-                                    <input type="text" class="form-input small calculated" value="1.99%" readonly>
+                                    <input type="text" id="turnerApp" class="form-input highlight" value="0">
+                                    <input type="text" id="turnerAppRate" class="form-input highlight small" value="2">
+                                    <span class="input-suffix">%</span>
                                 </div>
                             </div>
                         </div>
@@ -2181,12 +2185,16 @@
             const dso = parseNumber(document.getElementById('dso').value);
             const supplierDays = parseNumber(document.getElementById('supplierDays').value);
             const supplierDiscount = parseNumber(document.getElementById('supplierDiscount').value) / 100;
-            
+
             const materialFinancing = parseNumber(document.getElementById('materialFinancing').value);
+            const materialFinancingRate = parseNumber(document.getElementById('materialFinancingRate').value) / 100;
             const payAppAdvance = parseNumber(document.getElementById('payAppAdvance').value);
+            const payAppRate = parseNumber(document.getElementById('payAppRate').value) / 100;
             const flexLine = parseNumber(document.getElementById('flexLine').value);
+            const flexLineRate = parseNumber(document.getElementById('flexLineRate').value) / 100;
             const turnerApp = parseNumber(document.getElementById('turnerApp').value);
-            
+            const turnerAppRate = parseNumber(document.getElementById('turnerAppRate').value) / 100;
+
             const materialsOutlay = monthlyRevenue * materialsPercent;
             const supplierTermsBalance = supplierDays >= 30 ? materialsOutlay * (supplierDays / 30) : 0;
             
@@ -2231,10 +2239,10 @@
             const cashNeededProposal = maxDeficit - locBalance - supplierTermsBalance - ccBalance - billdTotal;
             const totalBalanceProposal = locBalance + supplierTermsBalance + ccBalance + billdTotal + Math.max(0, cashNeededProposal);
 
-            const materialFinancingCost = 0.03 * materialFinancing;
-            const payAppCost = 0.03 * payAppAdvance;
-            const flexLineCost = 0.0199 * flexLine;
-            const turnerCost = 0.0199 * turnerApp;
+            const materialFinancingCost = materialFinancingRate * materialFinancing;
+            const payAppCost = payAppRate * payAppAdvance;
+            const flexLineCost = flexLineRate * flexLine;
+            const turnerCost = turnerAppRate * turnerApp;
             const cashMonthlyCostProposal = (cashOpportunityCost / 12) * Math.max(0, cashNeededProposal);
 
             const totalMonthlyCostProposal = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost +
@@ -2275,10 +2283,10 @@
                 { label: 'Line of Credit', rate: (locRate * 100).toFixed(2) + '%', period: 'Yearly', balance: locBalance, monthlyCost: locMonthlyCost },
                 { label: 'Supplier Terms', rate: (supplierDiscount * 100).toFixed(2) + '%', period: 'Monthly', balance: supplierTermsBalance, monthlyCost: supplierMonthlyCost },
                 { label: 'Credit Card', rate: (ccRate * 100).toFixed(2) + '%', period: 'Yearly', balance: ccBalance, monthlyCost: ccMonthlyCost },
-                { label: 'Material Financing', rate: '3.00%', period: 'Monthly', balance: materialFinancing, monthlyCost: materialFinancingCost },
-                { label: 'Pay App Advance', rate: '3.00%', period: 'Monthly', balance: payAppAdvance, monthlyCost: payAppCost },
-                { label: 'Flex Line', rate: '1.99%', period: 'Monthly', balance: flexLine, monthlyCost: flexLineCost },
-                { label: 'Turner APP', rate: '1.99%', period: 'Monthly', balance: turnerApp, monthlyCost: turnerCost },
+                { label: 'Material Financing', rate: (materialFinancingRate * 100).toFixed(2) + '%', period: 'Monthly', balance: materialFinancing, monthlyCost: materialFinancingCost },
+                { label: 'Pay App Advance', rate: (payAppRate * 100).toFixed(2) + '%', period: 'Monthly', balance: payAppAdvance, monthlyCost: payAppCost },
+                { label: 'Flex Line', rate: (flexLineRate * 100).toFixed(2) + '%', period: 'Monthly', balance: flexLine, monthlyCost: flexLineCost },
+                { label: 'Turner APP', rate: (turnerAppRate * 100).toFixed(2) + '%', period: 'Monthly', balance: turnerApp, monthlyCost: turnerCost },
                 { label: 'Cash', rate: (cashOpportunityCost * 100).toFixed(2) + '%', period: 'Yearly', balance: Math.max(0, cashNeededProposal), monthlyCost: cashMonthlyCostProposal }
             ];
 
@@ -2336,9 +2344,13 @@
             const supplierTermsBalance = supplierDays >= 30 ? materialsOutlay * (supplierDays / 30) : 0;
 
             const materialFinancing = parseNumber(document.getElementById('materialFinancing').value);
+            const materialFinancingRate = parseNumber(document.getElementById('materialFinancingRate').value) / 100;
             const payAppAdvance = parseNumber(document.getElementById('payAppAdvance').value);
+            const payAppRate = parseNumber(document.getElementById('payAppRate').value) / 100;
             const flexLine = parseNumber(document.getElementById('flexLine').value);
+            const flexLineRate = parseNumber(document.getElementById('flexLineRate').value) / 100;
             const turnerApp = parseNumber(document.getElementById('turnerApp').value);
+            const turnerAppRate = parseNumber(document.getElementById('turnerAppRate').value) / 100;
 
             // Discovery calculations
             const cashNeededDisc = maxDeficit - locBalance - supplierTermsBalance - ccBalance;
@@ -2360,10 +2372,10 @@
             const totalMonthlyCostDisc = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost + cashMonthlyCostDisc;
             const blendedRateDisc = annualRevenue > 0 ? (totalMonthlyCostDisc * 12) / annualRevenue : 0;
 
-            const matFinCost = 0.03 * materialFinancing;
-            const payAppCost = 0.03 * payAppAdvance;
-            const flexLineCost = 0.0199 * flexLine;
-            const turnerCost = 0.0199 * turnerApp;
+            const matFinCost = materialFinancingRate * materialFinancing;
+            const payAppCost = payAppRate * payAppAdvance;
+            const flexLineCost = flexLineRate * flexLine;
+            const turnerCost = turnerAppRate * turnerApp;
             const cashMonthlyCostProp = (cashOpportunityCost / 12) * Math.max(0, cashNeededProp);
             const totalMonthlyCostProp = locMonthlyCost + ccMonthlyCost + supplierMonthlyCost +
                 matFinCost + payAppCost + flexLineCost + turnerCost + cashMonthlyCostProp;
@@ -2486,10 +2498,10 @@
                 { label: 'Line of Credit', rate: (locRate * 100).toFixed(1) + '%', balance: locBalance, monthlyCost: locMonthlyCost },
                 { label: 'Supplier Terms', rate: (supplierDiscount * 100).toFixed(1) + '%', balance: supplierTermsBalance, monthlyCost: supplierMonthlyCost },
                 { label: 'Credit Card', rate: (ccRate * 100).toFixed(1) + '%', balance: ccBalance, monthlyCost: ccMonthlyCost },
-                { label: 'Material Fin.', rate: '3.0%', balance: materialFinancing, monthlyCost: matFinCost },
-                { label: 'Pay App Adv.', rate: '3.0%', balance: payAppAdvance, monthlyCost: payAppCost },
-                { label: 'Flex Line', rate: '1.99%', balance: flexLine, monthlyCost: flexLineCost },
-                { label: 'Turner APP', rate: '1.99%', balance: turnerApp, monthlyCost: turnerCost },
+                { label: 'Material Fin.', rate: (materialFinancingRate * 100).toFixed(1) + '%', balance: materialFinancing, monthlyCost: matFinCost },
+                { label: 'Pay App Adv.', rate: (payAppRate * 100).toFixed(1) + '%', balance: payAppAdvance, monthlyCost: payAppCost },
+                { label: 'Flex Line', rate: (flexLineRate * 100).toFixed(1) + '%', balance: flexLine, monthlyCost: flexLineCost },
+                { label: 'Turner APP', rate: (turnerAppRate * 100).toFixed(1) + '%', balance: turnerApp, monthlyCost: turnerCost },
                 { label: 'Cash', rate: (cashOpportunityCost * 100).toFixed(1) + '%', balance: Math.max(0, cashNeededProp), monthlyCost: cashMonthlyCostProp }
             ];
 
