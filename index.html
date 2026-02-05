@@ -519,6 +519,26 @@
             font-weight: 500;
         }
 
+        /* Blended Cost Line */
+        .blended-cost-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-top: 0.5rem;
+            border-top: 1px solid var(--neutral-200);
+        }
+        .blended-cost-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--billd-blue);
+        }
+        .blended-cost-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--billd-blue);
+        }
+
         /* Warning Box */
         .cash-warning {
             margin: 1.5rem 0 0 0;
@@ -1263,7 +1283,7 @@
 
                         <div class="form-group">
                             <label>Cash Discount <span class="label-suffix">(%)</span></label>
-                            <input type="text" id="supplierDiscount" class="form-input highlight" value="2">
+                            <input type="text" id="supplierDiscount" class="form-input highlight" value="3">
                         </div>
                     </div>
 
@@ -1282,7 +1302,7 @@
                         <div class="form-group">
                             <label>Credit Card Balance <span class="label-suffix">($)</span></label>
                             <div class="input-row">
-                                <input type="text" id="ccBalance" class="form-input highlight" value="100,000">
+                                <input type="text" id="ccBalance" class="form-input highlight" value="0">
                                 <input type="text" id="ccRate" class="form-input highlight small" value="36">
                                 <span class="input-suffix">%</span>
                             </div>
@@ -1291,7 +1311,7 @@
                         <div class="form-group">
                             <label>Starting Cash Balance <span class="label-suffix">($)</span></label>
                             <div class="input-row">
-                                <input type="text" id="cashBalance" class="form-input highlight" value="50,000">
+                                <input type="text" id="cashBalance" class="form-input highlight" value="150,000">
                                 <input type="text" id="cashCostRate" class="form-input highlight small" value="15">
                                 <span class="input-suffix">%</span>
                             </div>
@@ -1872,7 +1892,7 @@
             });
         });
 
-        function renderBars(containerId, items, total, cashOnHand, cashOnHandContainerId) {
+        function renderBars(containerId, items, total, cashOnHand, cashOnHandContainerId, blendedRate) {
             const barsContainer = document.getElementById(containerId);
             barsContainer.innerHTML = '';
 
@@ -1902,6 +1922,14 @@
                     </div>
                 `;
             });
+
+            // Blended Cost of Working Capital line
+            barsContainer.innerHTML += `
+                <div class="blended-cost-line">
+                    <div class="blended-cost-label">Blended Cost of Working Capital</div>
+                    <div class="blended-cost-value">${(blendedRate * 100).toFixed(2)}%</div>
+                </div>
+            `;
 
             // Cash on Hand as green bar — rendered outside the chart area, aligned with bars
             const cohContainer = document.getElementById(cashOnHandContainerId);
@@ -2224,7 +2252,7 @@
             
             const discoveryItems = [
                 { label: 'Supplier Terms', value: supplierTermsBalance, icon: icons.supplier, isCash: false, alwaysShow: true },
-                { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: true },
+                { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: false },
                 { label: 'Line of Credit', value: locBalance, icon: icons.loc, isCash: false, alwaysShow: true },
                 { label: 'Cash', value: Math.max(0, cashNeededDiscovery), icon: icons.cash, isCash: true, alwaysShow: false }
             ];
@@ -2232,7 +2260,7 @@
             // Discovery C12: Available Cash = Starting Cash Balance (inputs!B19)
             const cashOnHandDiscovery = startingCash;
 
-            renderBars('barsDiscovery', discoveryItems, totalBalanceDiscovery, cashOnHandDiscovery, 'cashOnHandDiscoveryContainer');
+            renderBars('barsDiscovery', discoveryItems, totalBalanceDiscovery, cashOnHandDiscovery, 'cashOnHandDiscoveryContainer', blendedRateDiscovery);
             
             // PROPOSAL
             const billdTotal = materialFinancing + payAppAdvance + flexLine + turnerApp;
@@ -2253,7 +2281,7 @@
             
             const proposalItems = [
                 { label: 'Supplier Terms', value: supplierTermsBalance, icon: icons.supplier, isCash: false, alwaysShow: true },
-                { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: true },
+                { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: false },
                 { label: 'Line of Credit', value: locBalance, icon: icons.loc, isCash: false, alwaysShow: true },
                 { label: 'Material Financing', value: materialFinancing, icon: icons.materialFinancing, isCash: false, alwaysShow: false },
                 { label: 'Pay App Advance', value: payAppAdvance, icon: icons.payApp, isCash: false, alwaysShow: false },
@@ -2266,7 +2294,7 @@
             const cashFreedUp = Math.max(0, cashNeededDiscovery) - Math.max(0, cashNeededProposal);
             const cashOnHandProposal = startingCash + cashFreedUp;
 
-            renderBars('barsProposal', proposalItems, totalBalanceProposal, cashOnHandProposal, 'cashOnHandProposalContainer');
+            renderBars('barsProposal', proposalItems, totalBalanceProposal, cashOnHandProposal, 'cashOnHandProposalContainer', blendedRateProposal);
 
             // DISCOVERY COST TABLE
             const discoveryCostItems = [
