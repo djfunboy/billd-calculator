@@ -536,7 +536,7 @@
         .blended-cost-value {
             font-size: 1rem;
             font-weight: 600;
-            color: var(--billd-blue);
+            color: var(--billd-green);
         }
 
         /* Warning Box */
@@ -1234,7 +1234,7 @@
                         </div>
                         <div class="form-group">
                             <label>Prepared By</label>
-                            <input type="text" id="preparedBy" class="form-input highlight" value="" placeholder="Sales rep name">
+                            <input type="text" id="preparedBy" class="form-input highlight" value="" placeholder="Name">
                         </div>
                     </div>
 
@@ -2282,10 +2282,10 @@
             const proposalItems = [
                 { label: 'Supplier Terms', value: supplierTermsBalance, icon: icons.supplier, isCash: false, alwaysShow: true },
                 { label: 'Credit Card', value: ccBalance, icon: icons.creditCard, isCash: false, alwaysShow: false },
-                { label: 'Line of Credit', value: locBalance, icon: icons.loc, isCash: false, alwaysShow: true },
                 { label: 'Material Financing', value: materialFinancing, icon: icons.materialFinancing, isCash: false, alwaysShow: false },
                 { label: 'Pay App Advance', value: payAppAdvance, icon: icons.payApp, isCash: false, alwaysShow: false },
                 { label: 'Flex Line', value: flexLine, icon: icons.flexLine, isCash: false, alwaysShow: false },
+                { label: 'Line of Credit', value: locBalance, icon: icons.loc, isCash: false, alwaysShow: true },
                 { label: 'Turner APP', value: turnerApp, icon: icons.turnerApp, isCash: false, alwaysShow: false },
                 { label: 'Cash', value: Math.max(0, cashNeededProposal), icon: icons.cash, isCash: true, alwaysShow: false }
             ];
