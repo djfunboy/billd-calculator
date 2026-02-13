@@ -1312,7 +1312,7 @@
                             <label>Starting Cash Balance <span class="label-suffix">($)</span></label>
                             <div class="input-row">
                                 <input type="text" id="cashBalance" class="form-input highlight" value="150,000">
-                                <input type="text" id="cashCostRate" class="form-input highlight small" value="15">
+                                <input type="text" id="cashCostRate" class="form-input highlight small" value="10">
                                 <span class="input-suffix">%</span>
                             </div>
                         </div>
@@ -2290,9 +2290,10 @@
                 { label: 'Cash', value: Math.max(0, cashNeededProposal), icon: icons.cash, isCash: true, alwaysShow: false }
             ];
 
-            // Proposal C15: Available Cash = Discovery Cash + (Discovery Cash Used - Proposal Cash Used)
-            const cashFreedUp = Math.max(0, cashNeededDiscovery) - Math.max(0, cashNeededProposal);
-            const cashOnHandProposal = startingCash + cashFreedUp;
+            // Excel: Available Cash = Excess Cash Made Available + Starting Cash
+            // C17 = SUM(all sources) + C2 = totalBalanceProposal - maxDeficit
+            const excessCash = totalBalanceProposal - maxDeficit;
+            const cashOnHandProposal = startingCash + excessCash;
 
             renderBars('barsProposal', proposalItems, totalBalanceProposal, cashOnHandProposal, 'cashOnHandProposalContainer', blendedRateProposal);
 
@@ -2388,9 +2389,9 @@
             // Proposal calculations
             const billdTotal = materialFinancing + payAppAdvance + flexLine + turnerApp;
             const cashNeededProp = maxDeficit - locBalance - supplierTermsBalance - ccBalance - billdTotal;
-            const cashFreedUp = Math.max(0, cashNeededDisc) - Math.max(0, cashNeededProp);
-            const cashOnHandProp = startingCash + cashFreedUp;
             const totalBalanceProp = locBalance + supplierTermsBalance + ccBalance + billdTotal + Math.max(0, cashNeededProp);
+            const excessCash = totalBalanceProp - maxDeficit;
+            const cashOnHandProp = startingCash + excessCash;
 
             // Cost calculations
             const locMonthlyCost = (locRate / 12) * locBalance;
